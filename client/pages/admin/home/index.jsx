@@ -1,47 +1,60 @@
 'use strict';
+const Actions = require('./actions');
 const React = require('react');
 const Moment = require('moment');
-
+const Store = require('./store');
 
 class HomePage extends React.Component {
+
     constructor(props) {
 
         super(props);
 
-        this.state = this.getThisMoment();
+        Actions.getResults();
+
+        this.state = {
+            results : []
+        }
     }
 
     componentDidMount() {
-
-        this.interval = setInterval(this.refreshTime.bind(this), 1000);
+        console.log("componentDidMount")
+        this.unsubscribeStore = Store.subscribe(this.onStoreChange.bind(this));
+        //this.interval = setInterval(this.refreshTime.bind(this), 1000);
     }
 
-    componentWillUnmount() {
-
-        clearInterval(this.interval);
+    componentWillReceiveProps(nextProps) {
+        console.log("componentWillReceiveProps")
+        Actions.getResults(query);
     }
 
-    refreshTime() {
-
-        this.setState(this.getThisMoment());
+    onStoreChange() {
+        console.log("onStoreChange");
+        this.setState(Store.getState());
+        console.log(Store.getState())
     }
-
-    getThisMoment() {
-
-        const thisMoment = Moment();
-
-        return {
-            second: thisMoment.format('ss'),
-            minute: thisMoment.format('mm'),
-            hour: thisMoment.format('HH'),
-            day: thisMoment.format('DD'),
-            month: thisMoment.format('MM'),
-            year: thisMoment.format('YYYY')
-        };
-    }
+    // getUsers() {
+    //     Actions.getResults("", function(err, response){
+    //         console.log('callback')
+    //         console.log(response)
+    //     });
+    //     console.log("return")
+    //     return {
+    //         total       : 0,
+    //         active      : 0,
+    //         facebook    : 0
+    //     }
+    // }
 
     render() {
-
+        console.log('RENDER: this.props')
+        //console.log(this.props)
+        console.log('here')
+        console.log(this.state.results.data)
+        var data = this.state.results.data || [];
+        //var total = this.state.results.data;
+        console.log('total is : ' + data.length)
+        var total = data.length;
         return (
             <section className="section-home container">
                 <div className="row">
@@ -51,51 +64,28 @@ class HomePage extends React.Component {
                             <div className="col-sm-4">
                                 <div className="well text-center">
                                     <div className="stat-value">
-                                        {this.state.hour}
+                                        {total}
                                     </div>
-                                    <div className="stat-label">hour</div>
+                                    <div className="stat-label">TOTAL USERS</div>
                                 </div>
                             </div>
                             <div className="col-sm-4">
                                 <div className="well text-center">
                                     <div className="stat-value">
-                                        {this.state.minute}
+
                                     </div>
-                                    <div className="stat-label">minute</div>
+                                    <div className="stat-label">ACTIVE USERS</div>
                                 </div>
                             </div>
                             <div className="col-sm-4">
                                 <div className="well text-center">
                                     <div className="stat-value">
-                                        {this.state.second}
+
                                     </div>
-                                    <div className="stat-label">second</div>
+                                    <div className="stat-label">FACEBOOK USERS</div>
                                 </div>
                             </div>
-                            <div className="col-sm-4">
-                                <div className="well text-center">
-                                    <div className="stat-value">
-                                        {this.state.year}
-                                    </div>
-                                    <div className="stat-label">year</div>
-                                </div>
-                            </div>
-                            <div className="col-sm-4">
-                                <div className="well text-center">
-                                    <div className="stat-value">
-                                        {this.state.month}
-                                    </div>
-                                    <div className="stat-label">month</div>
-                                </div>
-                            </div>
-                            <div className="col-sm-4">
-                                <div className="well text-center">
-                                    <div className="stat-value">
-                                        {this.state.day}
-                                    </div>
-                                    <div className="stat-label">day</div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                     <div className="col-sm-5 text-center">
