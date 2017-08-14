@@ -10,10 +10,21 @@ class HomePage extends React.Component {
 
         super(props);
 
-        Actions.getResults();
-
         this.state = {
             results : []
+        }
+
+        // TODO: query is just called on creation, find a way to refresh when required
+        // a) with timer b) every time users navigates to this screen section
+        Actions.getResults();
+    }
+
+    getInitialState(){
+        this.state = {
+            results : {
+                data : [],
+                items : {}
+            }
         }
     }
 
@@ -23,38 +34,38 @@ class HomePage extends React.Component {
         //this.interval = setInterval(this.refreshTime.bind(this), 1000);
     }
 
+    componentWillUnmount() {
+        this.unsubscribeStore();
+    }
+
     componentWillReceiveProps(nextProps) {
         console.log("componentWillReceiveProps")
+        var query = '';
         Actions.getResults(query);
     }
 
     onStoreChange() {
         console.log("onStoreChange");
-        this.setState(Store.getState());
         console.log(Store.getState())
+        this.setState(Store.getState());
     }
-    // getUsers() {
-    //     Actions.getResults("", function(err, response){
-    //         console.log('callback')
-    //         console.log(response)
-    //     });
-    //     console.log("return")
-    //     return {
-    //         total       : 0,
-    //         active      : 0,
-    //         facebook    : 0
-    //     }
-    // }
 
     render() {
-        console.log('RENDER: this.props')
-        //console.log(this.props)
-        console.log('here')
-        console.log(this.state.results.data)
+        console.log('Render home - Dashboard')
+        //var items = this.state.results.items || [];
         var data = this.state.results.data || [];
-        //var total = this.state.results.data;
-        console.log('total is : ' + data.length)
-        var total = data.length;
+        console.log(data)
+
+        var total = data.length || 0;
+        console.log('Total users: ' + total)
+
+        // filter only active users
+        var activeUsers = data.filter(function(user){
+            return user.isActive
+        });
+        var totalActive = activeUsers.length;
+        console.log('Total Active users: ' + totalActive)
+
         return (
             <section className="section-home container">
                 <div className="row">
@@ -72,7 +83,7 @@ class HomePage extends React.Component {
                             <div className="col-sm-4">
                                 <div className="well text-center">
                                     <div className="stat-value">
-
+                                        {totalActive}
                                     </div>
                                     <div className="stat-label">ACTIVE USERS</div>
                                 </div>
@@ -80,7 +91,7 @@ class HomePage extends React.Component {
                             <div className="col-sm-4">
                                 <div className="well text-center">
                                     <div className="stat-value">
-
+                                        0
                                     </div>
                                     <div className="stat-label">FACEBOOK USERS</div>
                                 </div>
@@ -88,10 +99,12 @@ class HomePage extends React.Component {
 
                         </div>
                     </div>
+                    {/*
                     <div className="col-sm-5 text-center">
                         <h1 className="page-header">Throttle guage</h1>
                         <i className="fa fa-dashboard bamf"></i>
                     </div>
+                    */}
                 </div>
             </section>
         );

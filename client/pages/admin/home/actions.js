@@ -17,7 +17,11 @@ class Actions {
             Constants.GET_RESULTS_RESPONSE,
 			callback
         );
+
     }
+
+
+
 }
 
 module.exports = Actions;
