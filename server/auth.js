@@ -3,11 +3,11 @@ const Async = require('async');
 const Boom = require('boom');
 const Config = require('../config');
 
-
 const internals = {};
 
-
 internals.applyStrategy = function (server, next) {
+
+    console.log('apply strategy');
 
     const Session = server.plugins['hapi-mongo-models'].Session;
     const User = server.plugins['hapi-mongo-models'].User;
@@ -67,6 +67,29 @@ internals.applyStrategy = function (server, next) {
         }
     });
 
+    server.auth.strategy('facebook', 'bell' , {
+            provider: 'facebook',
+            password: 'cookie_encryption_password_secure',
+            isSecure: false,
+            // You'll need to go to https://developers.facebook.com/ and set up a
+            // Website application to get started
+            // Once you create your app, fill out Settings and set the App Domains
+            // Under Settings >> Advanced, set the Valid OAuth redirect URIs to include http://<yourdomain.com>/bell/door
+            // and enable Client OAuth Login
+            clientId: '115199272474609',
+            clientSecret: '1ad8608299b69d88215da228fa4286f4',
+            location: server.info.uri
+    });
+
+
+    // //Setup the social Twitter login strategy
+    // server.auth.strategy('twitter', 'bell', {
+    //   provider: 'twitter',
+    //   password: 'secret_cookie_encryption_password', //Use something more secure in production
+    //   clientId: '6EaarqQZEeA4mm9c1HmxTWi2M',
+    //   clientSecret: '50u0anumuO3fdk083NVmGThIslmsFz6LcdRJ7n91M5CnshHKEK',
+    //   isSecure: false //Should be set to true (which is the default) in production
+    // });
 
     next();
 };
@@ -116,7 +139,7 @@ internals.preware = {
 
 exports.register = function (server, options, next) {
 
-    server.dependency('hapi-mongo-models', internals.applyStrategy);
+    server.dependency(['mailer', 'hapi-mongo-models'], internals.applyStrategy);
 
     next();
 };

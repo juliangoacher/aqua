@@ -119,6 +119,10 @@ class LoginPage extends React.Component {
                                 {alerts}
                                 {formElements}
                             </form>
+                            <Link to="/api/login-facebook" className="btn btn-info btn-block">
+                                Facebook login
+                            </Link>
+                            <a href="/api/login-facebook">Facebook login</a>
                         </div>
                     </div>
                 </div>

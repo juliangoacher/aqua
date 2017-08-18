@@ -15,6 +15,13 @@ internals.applyRoutes = function (server, next) {
     const Session = server.plugins['hapi-mongo-models'].Session;
     const User = server.plugins['hapi-mongo-models'].User;
 
+    // server.auth.strategy('twitter', 'bell', {
+    //   provider: 'twitter',
+    //   password: 'secret_cookie_encryption_password', //Use something more secure in production
+    //   clientId: '6EaarqQZEeA4mm9c1HmxTWi2M',
+    //   clientSecret: '50u0anumuO3fdk083NVmGThIslmsFz6LcdRJ7n91M5CnshHKEK',
+    //   isSecure: false //Should be set to true (which is the default) in production
+    // });
 
     server.route({
         method: 'POST',
@@ -118,6 +125,63 @@ internals.applyRoutes = function (server, next) {
         }
     });
 
+    server.route({
+        method: ['GET', 'POST'], // Must handle both GET and POST
+        path: '/login-facebook',          // The callback endpoint registered with the provider
+        config: {
+            auth: {
+                mode: 'try',
+                strategy: 'facebook',
+            }
+        },
+        handler: function(request, reply) {
+            console.log('login-facebook handler!!')
+            if (!request.auth.isAuthenticated) {
+                // TODO: check the errror is correcty returned
+                return reply({ err : request.auth.error.message });
+            }
+
+            console.log('facebook user is authenticated!');
+
+            var username =  request.auth.credentials.profile;
+            console.log(username);
+            console.log(request)
+
+            const userId = username.id;
+            Session.create(userId.toString(), (err, session) => {
+
+                console.log('session created!')
+                console.log(session)
+
+                if (err) {
+                    return reply(err);
+                }
+
+                const credentials = userId + ':' + session.key;
+                const authHeader = 'Basic ' + new Buffer(credentials).toString('base64');
+
+                const result = {
+                    user: {
+                        _id: userId,
+                        username: username.username || username.displayName || name.firts + " " + name.last,
+                        email: username.email,
+                        roles: ''
+                    },
+                    session: session,
+                    authHeader
+                };
+
+                console.log('the result is:')
+                console.log(result);
+
+                request.cookieAuth.set(result);
+                //return reply(result);
+                //return reply.redirect('/login-facebook/callback');
+                return reply.redirect('/')
+            });
+
+        }
+    });
 
     server.route({
         method: 'POST',
@@ -277,7 +341,6 @@ internals.applyRoutes = function (server, next) {
             });
         }
     });
-
 
     next();
 };

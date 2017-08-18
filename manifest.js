@@ -40,6 +40,9 @@ const manifest = {
             plugin: 'hapi-auth-cookie'
         },
         {
+            plugin: 'bell'
+        },
+        {
             plugin: 'vision'
         },
         {

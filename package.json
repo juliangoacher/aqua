@@ -17,6 +17,7 @@
     "node": ">=8.1.4"
   },
   "dependencies": {
+    "bell": "^8.5.0",
     "async": "2.x.x",
     "bcrypt": "1.x.x",
     "boom": "5.x.x",

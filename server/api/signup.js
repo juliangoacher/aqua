@@ -22,7 +22,8 @@ internals.applyRoutes = function (server, next) {
             plugins: {
                 'hapi-auth-cookie': {
                     redirectTo: false
-                }
+                },
+                'bell': {}
             },
             auth: {
                 mode: 'try',
@@ -81,6 +82,8 @@ internals.applyRoutes = function (server, next) {
             }]
         },
         handler: function (request, reply) {
+
+            console.log('signup handler');
 
             const mailer = request.server.plugins.mailer;
 
