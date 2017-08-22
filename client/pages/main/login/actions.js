@@ -41,7 +41,7 @@ class Actions {
                     if (query.returnUrl) {
                         window.location.href = query.returnUrl;
                     }
-                    else if (response && response.roles) {
+                        else if (response && response.roles) {
                         if (response.roles.admin) {
                             window.location.href = '/admin';
                         }
@@ -82,6 +82,36 @@ class Actions {
             }
         );
     }
+
+    // static loginFacebook(data) {
+    //
+    //     ApiActions.post(
+    //         '/api/login-facebook',
+    //         data,
+    //         LoginStore,
+    //         Constants.LOGIN,
+    //         Constants.LOGIN_RESPONSE,
+    //         (err, response) => {
+    //             console.log('login facebook response!!!! ' + err)
+    //             console.log(response)
+    //             if (!err) {
+    //                 const query = Qs.parse(window.location.search.substring(1));
+    //
+    //                 if (query.returnUrl) {
+    //                     window.location.href = query.returnUrl;
+    //                 }
+    //                 else if (response && response.user) {
+    //                     if (response.user.roles.admin) {
+    //                         window.location.href = '/admin';
+    //                     }
+    //                     else {
+    //                         window.location.href = '/account';
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     );
+    // }
 
     static logout() {
 

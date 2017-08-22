@@ -20,16 +20,20 @@ internals.applyStrategy = function (server, next) {
         appendNext: 'returnUrl',
         validateFunc: function (request, data, callback) {
 
+            console.log('---validateFunc');
+            console.log('data.session:')
+            console.log(data.session)
+
             Async.auto({
                 session: function (done) {
-
+                    console.log('session OK')
                     const id = data.session._id;
                     const key = data.session.key;
 
                     Session.findByCredentials(id, key, done);
                 },
                 user: ['session', function (results, done) {
-
+                    console.log('user OK')
                     if (!results.session) {
                         return done();
                     }
@@ -37,7 +41,7 @@ internals.applyStrategy = function (server, next) {
                     User.findById(results.session.userId, done);
                 }],
                 roles: ['user', function (results, done) {
-
+                    console.log('roles OK')
                     if (!results.user) {
                         return done();
                     }
@@ -45,6 +49,7 @@ internals.applyStrategy = function (server, next) {
                     results.user.hydrateRoles(done);
                 }],
                 scope: ['user', function (results, done) {
+                    console.log('scope OK')
 
                     if (!results.user || !results.user.roles) {
                         return done();
@@ -55,10 +60,12 @@ internals.applyStrategy = function (server, next) {
             }, (err, results) => {
 
                 if (err) {
+                    console.log('****error co!: ' + err)
                     return callback(err);
                 }
 
                 if (!results.session) {
+                    console.log('****there is not session!!!')
                     return callback(null, false);
                 }
 
@@ -71,6 +78,7 @@ internals.applyStrategy = function (server, next) {
             provider: 'facebook',
             password: 'cookie_encryption_password_secure',
             isSecure: false,
+            //redirectTo: '/login',
             // You'll need to go to https://developers.facebook.com/ and set up a
             // Website application to get started
             // Once you create your app, fill out Settings and set the App Domains

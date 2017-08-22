@@ -16,7 +16,9 @@ internals.applyRoutes = function (server, next) {
             }
         },
         handler: function (request, reply) {
-
+            console.log('**** account handler!');
+            console.log('request.auth.credentials.query:')
+            console.log(request.auth.credentials.query)
             reply.view('account/index');
         }
     });

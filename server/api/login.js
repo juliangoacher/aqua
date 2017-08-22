@@ -107,7 +107,7 @@ internals.applyRoutes = function (server, next) {
         handler: function (request, reply) {
 
             const credentials = request.pre.session._id.toString() + ':' + request.pre.session.key;
-            const authHeader = 'Basic ' + new Buffer(credentials).toString('base64');
+                const authHeader = 'Basic ' + new Buffer(credentials).toString('base64');
 
             const result = {
                 user: {
@@ -119,6 +119,9 @@ internals.applyRoutes = function (server, next) {
                 session: request.pre.session,
                 authHeader
             };
+
+            console.log('result:')
+            console.log(result)
 
             request.cookieAuth.set(result);
             reply(result);
@@ -135,7 +138,9 @@ internals.applyRoutes = function (server, next) {
             }
         },
         handler: function(request, reply) {
-            console.log('login-facebook handler!!')
+            console.log('server/api/login.js login-facebook handler')
+            console.log(request.auth)
+
             if (!request.auth.isAuthenticated) {
                 // TODO: check the errror is correcty returned
                 return reply({ err : request.auth.error.message });
@@ -144,13 +149,13 @@ internals.applyRoutes = function (server, next) {
             console.log('facebook user is authenticated!');
 
             var username =  request.auth.credentials.profile;
-            console.log(username);
-            console.log(request)
+            //console.log(username);
+            //console.log(request)
 
             const userId = username.id;
             Session.create(userId.toString(), (err, session) => {
 
-                console.log('session created!')
+                console.log('*****session created!')
                 console.log(session)
 
                 if (err) {
@@ -174,10 +179,12 @@ internals.applyRoutes = function (server, next) {
                 console.log('the result is:')
                 console.log(result);
 
+                // Set the session object
                 request.cookieAuth.set(result);
-                //return reply(result);
-                //return reply.redirect('/login-facebook/callback');
-                return reply.redirect('/')
+
+                return reply(result);
+                //return reply.redirect('/login');
+                //return reply.redirect('/')
             });
 
         }

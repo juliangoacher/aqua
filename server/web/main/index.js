@@ -97,13 +97,14 @@ internals.applyRoutes = function (server, next) {
             plugins: {
                 'hapi-auth-cookie': {
                     redirectTo: false
-                },
-                'bell': {
                 }
             }
         },
         handler: function (request, reply) {
-            console.log("HANDLER: params.glob: " + request.params.glob)
+            console.log("***web/main/index.js HANDLER: params.glob: " + request.params.glob)
+            console.log('request.auth.isAuthenticated ->')
+            console.log(request.auth.isAuthenticated)
+
             if (request.params.glob !== 'logout' &&
                 request.auth.isAuthenticated) {
 
