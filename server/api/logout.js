@@ -21,8 +21,7 @@ internals.applyRoutes = function (server, next) {
             plugins: {
                 'hapi-auth-cookie': {
                     redirectTo: false
-                },
-                'bell': {}
+                }
             }
         },
         handler: function (request, reply) {

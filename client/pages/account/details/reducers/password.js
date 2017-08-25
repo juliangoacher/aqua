@@ -1,34 +1,41 @@
 'use strict';
-const Constants = require('./constants');
+const Constants = require('../constants');
 const ObjectAssign = require('object-assign');
-const ParseValidation = require('../../../helpers/parse-validation');
-const Redux = require('redux');
+const ParseValidation = require('../../../../helpers/parse-validation');
 
 
 const initialState = {
     loading: false,
-    success: false,
+    showSaveSuccess: false,
     error: undefined,
     hasError: {},
-    help: {}
+    help: {},
+    password: '',
+    passwordConfirm: ''
 };
 const reducer = function (state = initialState, action) {
 
-    if (action.type === Constants.REGISTER) {
+    if (action.type === Constants.SAVE_PASSWORD) {
         return ObjectAssign({}, state, {
             loading: true
         });
     }
 
-    if (action.type === Constants.REGISTER_RESPONSE) {
+    if (action.type === Constants.SAVE_PASSWORD_RESPONSE) {
         const validation = ParseValidation(action.response);
 
         return ObjectAssign({}, state, {
             loading: false,
-            success: !action.err,
+            showSaveSuccess: !action.err,
             error: validation.error,
             hasError: validation.hasError,
             help: validation.help
+        });
+    }
+
+    if (action.type === Constants.HIDE_PASSWORD_SAVE_SUCCESS) {
+        return ObjectAssign({}, state, {
+            showSaveSuccess: false
         });
     }
 
@@ -36,4 +43,4 @@ const reducer = function (state = initialState, action) {
 };
 
 
-module.exports = Redux.createStore(reducer);
+module.exports = reducer;

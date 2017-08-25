@@ -22,9 +22,9 @@ class SignupPage extends React.Component {
                     <div className="col-sm-6 text-center">
                         <h1 className="page-header">Complete your info</h1>
                         <p className="lead">
-                            Please add more details to your Mocks account personal info
+                            Please add more details about you before you access to Mocks
                         </p>
-                        <i className="fa fa-thumbs-o-up bamf"></i>
+                        <i className="fa fa-thumbs-o-down bamf"></i>
                     </div>
                 </div>
             </section>

@@ -10,6 +10,8 @@ const StaticRouter = ReactRouter.StaticRouter;
 
 internals.routeHandler = function (request, reply) {
 
+    console.log(' server/web/main/index.js routeHandler')
+
     const routerState = {};
     const routerProps = {
         location: request.url.path,
@@ -46,45 +48,11 @@ internals.routeHandler = function (request, reply) {
 
 internals.applyRoutes = function (server, next) {
 
-    // server.auth.strategy('facebook', 'bell' , {
-    //         provider: 'facebook',
-    //         password: 'cookie_encryption_password_secure',
-    //         isSecure: false,
-    //         // You'll need to go to https://developers.facebook.com/ and set up a
-    //         // Website application to get started
-    //         // Once you create your app, fill out Settings and set the App Domains
-    //         // Under Settings >> Advanced, set the Valid OAuth redirect URIs to include http://<yourdomain.com>/bell/door
-    //         // and enable Client OAuth Login
-    //         clientId: '115199272474609',
-    //         clientSecret: '1ad8608299b69d88215da228fa4286f4',
-    //         location: server.info.uri
-    //     });
-
     server.route({
         method: 'GET',
         path: '/{glob*}',
         handler: internals.routeHandler
     });
-
-   //  server.route({
-   //      method: 'GET',
-   //      path: '/login-facebook',
-   //      config: {
-   //      // Use the 'oauth' auth strategy to allow bell to handle the oauth flow.
-   //      auth: 'oauth',
-   //      handler: function loginHandler(request, reply) {
-   //          console.log('handler login-facebook')
-   //          // Here we take the profile that was kindly pulled in
-   //          // by bell and set it to our cookie session.
-   //          // This will set the cookie during the redirect and
-   //          // log them into your application.
-   //          request.auth.session.set(request.auth.credentials.profile);
-   //
-   //          // User is now logged in, redirect them to their account area
-   //          return reply.redirect('/my-account');
-   //      }
-   // }
-   //  });
 
     server.route({
         method: 'GET',
@@ -101,7 +69,7 @@ internals.applyRoutes = function (server, next) {
             }
         },
         handler: function (request, reply) {
-            console.log("***web/main/index.js HANDLER: params.glob: " + request.params.glob)
+            console.log("*** /login/{glob*} server/web/main/index.js HANDLER: params.glob: " + request.params.glob)
             console.log('request.auth.isAuthenticated ->')
             console.log(request.auth.isAuthenticated)
 

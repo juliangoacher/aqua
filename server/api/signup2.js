@@ -7,7 +7,7 @@ const Joi = require('joi');
 
 const internals = {};
 
-
+// Step 2 in signup process: User can enter additional information
 internals.applyRoutes = function (server, next) {
 
     const Account = server.plugins['hapi-mongo-models'].Account;
@@ -17,7 +17,7 @@ internals.applyRoutes = function (server, next) {
 
     server.route({
         method: 'POST',
-        path: '/signup',
+        path: '/signup2',
         config: {
             plugins: {
                 'hapi-auth-cookie': {
@@ -57,32 +57,11 @@ internals.applyRoutes = function (server, next) {
                         reply(true);
                     });
                 }
-            }, {
-                assign: 'emailCheck',
-                method: function (request, reply) {
-
-                    const conditions = {
-                        email: request.payload.email
-                    };
-
-                    User.findOne(conditions, (err, user) => {
-
-                        if (err) {
-                            return reply(err);
-                        }
-
-                        if (user) {
-                            return reply(Boom.conflict('Email already in use.'));
-                        }
-
-                        reply(true);
-                    });
-                }
             }]
         },
         handler: function (request, reply) {
 
-            console.log('signup handler');
+            console.log('signup2 handler');
 
             const mailer = request.server.plugins.mailer;
 

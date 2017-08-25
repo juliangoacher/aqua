@@ -14,9 +14,13 @@ class Form extends React.Component {
     constructor(props) {
 
         super(props);
-
+        console.log(props)
+        
         this.input = {};
         this.state = Store.getState();
+
+        Actions.getDetails();
+        Actions.getUser();
     }
 
     componentDidMount() {
@@ -46,12 +50,14 @@ class Form extends React.Component {
         Actions.sendRequest({
             name: this.input.name.value(),
             username: this.input.username.value(),
-            password: this.input.password.value(),
             email: this.input.email.value()
         });
     }
 
     render() {
+
+        console.log('-----state----')
+        console.log(this.state)
 
         let alert = [];
 
@@ -70,30 +76,29 @@ class Form extends React.Component {
 
         let formElements;
 
+
         if (!this.state.success) {
             formElements = <fieldset>
                 <TextControl
-                    ref={(c) => (this.input.name = c)}
-                    name="name"
-                    label="Name"
-                    hasError={this.state.hasError.name}
-                    help={this.state.help.name}
-                    disabled="disabled"
+                    name="username"
+                    label="Username"
+                    value={this.state.username}
+
                 />
                 <TextControl
-                    ref={(c) => (this.input.email = c)}
+                    value={this.state.email}
                     name="email"
                     label="Email"
-                    hasError={this.state.hasError.email}
-                    help={this.state.help.email}
-                    disabled="true"
+                />
+                <TextControl
+                    value={this.state.username}
+                    name="username"
+                    label="Username"
                 />
                 <TextControl
                     ref={(c) => (this.input.dateofbirth = c)}
                     name="dateofbirth"
                     label="Date of birth"
-                    hasError={this.state.hasError.username}
-                    help={this.state.help.username}
                     disabled={this.state.loading}
                 />
                 <ControlGroup hideLabel={true} hideHelp={true}>
@@ -144,7 +149,7 @@ class Form extends React.Component {
                         inputClasses={{ 'btn-success': true }}
                         disabled={this.state.loading}>
 
-                        Create my account
+                        Access to Mocks
                         <Spinner space="left" show={this.state.loading} />
                     </Button>
                 </ControlGroup>
