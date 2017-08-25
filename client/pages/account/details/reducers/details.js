@@ -15,6 +15,15 @@ const initialState = {
         first: '',
         middle: '',
         last: ''
+    },
+    details: {
+        dateOfBirth: '',
+        location: '',
+        ethnicity: '',
+        cycle: '',
+        exam: '',
+        userType: '',
+        subjects: ''
     }
 };
 const reducer = function (state = initialState, action) {

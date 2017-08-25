@@ -21,6 +21,15 @@ const propTypes = {
         middle: PropTypes.string,
         last: PropTypes.string
     }),
+    details : PropTypes.shape({
+        dateOfBirth: PropTypes.string,
+        location: PropTypes.string,
+        ethnicity: PropTypes.string,
+        cycle: PropTypes.string,
+        exam: PropTypes.string,
+        userType: PropTypes.string,
+        subjects: PropTypes.string              // this is an array  []
+    }),
     showSaveSuccess: PropTypes.bool
 };
 
@@ -31,14 +40,16 @@ class DetailsForm extends React.Component {
         super(props);
 
         this.state = {
-            name: props.name
+            name: props.name,
+            details: props.details
         };
     }
 
     componentWillReceiveProps(nextProps) {
 
         this.setState({
-            name: nextProps.name
+            name: nextProps.name,
+            details: nextProps.details
         });
     }
 
@@ -87,32 +98,69 @@ class DetailsForm extends React.Component {
                     <legend>Additional info</legend>
                     {alerts}
                     <TextControl
-                        name="name.first"
-                        label="First name"
-                        value={this.state.name.first}
+                        name="details.dateOfBirth"
+                        label="Date of birth"
+                        value={this.state.details.dateOfBirth}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['name.first']}
-                        help={this.props.help['name.first']}
+                        hasError={this.props.hasError['details.dateOfBirth']}
+                        help={this.props.help['details.dateOfBirth']}
                         disabled={this.props.loading}
                     />
                     <TextControl
-                        name="name.middle"
-                        label="Middle name"
-                        value={this.state.name.middle}
+                        name="details.location"
+                        label="Location"
+                        value={this.state.details.location}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['name.middle']}
-                        help={this.props.help['name.middle']}
+                        hasError={this.props.hasError['details.location']}
+                        help={this.props.help['details.location']}
                         disabled={this.props.loading}
                     />
                     <TextControl
-                        name="name.last"
-                        label="Last name"
-                        value={this.state.name.last}
+                        name="details.ethnicity"
+                        label="Ethnicity"
+                        value={this.state.details.ethnicity}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['name.last']}
-                        help={this.props.help['name.last']}
+                        hasError={this.props.hasError['details.ethnicity']}
+                        help={this.props.help['details.ethnicity']}
                         disabled={this.props.loading}
                     />
+                    <TextControl
+                        name="details.cycle"
+                        label="Cycle"
+                        value={this.state.details.cycle}
+                        onChange={LinkState.bind(this)}
+                        hasError={this.props.hasError['details.cycle']}
+                        help={this.props.help['details.cycle']}
+                        disabled={this.props.loading}
+                    />
+                    <TextControl
+                        name="details.exam"
+                        label="Exam"
+                        value={this.state.details.exam}
+                        onChange={LinkState.bind(this)}
+                        hasError={this.props.hasError['details.exam']}
+                        help={this.props.help['details.exam']}
+                        disabled={this.props.loading}
+                    />
+                    <TextControl
+                        name="details.userType"
+                        label="User Type"
+                        value={this.state.details.userType}
+                        onChange={LinkState.bind(this)}
+                        hasError={this.props.hasError['details.userType']}
+                        help={this.props.help['details.userType']}
+                        disabled={this.props.loading}
+                    />
+                    <TextControl
+                        name="details.subjects"
+                        label="Subjects"
+                        value={this.state.details.subjects}
+                        onChange={LinkState.bind(this)}
+                        hasError={this.props.hasError['details.subjects']}
+                        help={this.props.help['details.subjects']}
+                        disabled={this.props.loading}
+                    />
+                
                     <ControlGroup hideLabel={true} hideHelp={true}>
                         <Button
                             type="submit"
