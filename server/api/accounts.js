@@ -96,7 +96,7 @@ internals.applyRoutes = function (server, next) {
         handler: function (request, reply) {
 
             const id = request.auth.credentials.roles.account._id.toString();
-            const fields = Account.fieldsAdapter('user name timeCreated');
+            const fields = Account.fieldsAdapter('user name timeCreated details');
 
             Account.findById(id, fields, (err, account) => {
 
@@ -218,6 +218,55 @@ internals.applyRoutes = function (server, next) {
             };
 
             Account.findByIdAndUpdate(id, update, findOptions, (err, account) => {
+
+                if (err) {
+                    return reply(err);
+                }
+
+                reply(account);
+            });
+        }
+    });
+
+    // JL: Added to test adding additional mocks data
+    server.route({
+        method: 'PUT',
+        path: '/accounts/my/mocks',
+        config: {
+            auth: {
+                strategy: 'session',
+                scope: 'account'
+            },
+            validate: {
+                payload: {
+                    details: Joi.object().keys({
+                        dateOfBirth: Joi.string().allow(''),
+                        location: Joi.string().allow(''),
+                        ethnicity: Joi.string().allow(''),
+                        cycle: Joi.string().allow(''),
+                        userType: Joi.string().allow('')
+                    }).required()
+                }
+            }
+        },
+        handler: function (request, reply) {
+            console.log('***server/api/accounts');
+
+            const id = request.auth.credentials.roles.account._id.toString();
+            const update = {
+                $set: {
+                    details: request.payload.details
+                }
+            };
+            const findOptions = {
+                fields: Account.fieldsAdapter('user timeCreated details')
+            };
+            console.log('--> update:')
+            console.log(update);
+
+            Account.findByIdAndUpdate(id, update, findOptions, (err, account) => {
+                console.log('(RETURN) account is:')
+                console.log(account)
 
                 if (err) {
                     return reply(err);

@@ -27,6 +27,18 @@ class Actions {
         );
     }
 
+    static saveMocksDetails(data) {
+
+        ApiActions.put(
+            '/api/accounts/my/mocks',
+            data,
+            Store,
+            Constants.SAVE_DETAILS,
+            Constants.SAVE_DETAILS_RESPONSE
+        );
+    }
+
+
     static hideDetailsSaveSuccess() {
 
         Store.dispatch({

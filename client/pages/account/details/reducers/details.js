@@ -28,6 +28,8 @@ const initialState = {
 };
 const reducer = function (state = initialState, action) {
 
+    console.log("REDUCER. actions.type:")
+    console.log(action.type)
     if (action.type === Constants.GET_DETAILS) {
         return ObjectAssign({}, state, {
             loading: true,
@@ -37,6 +39,8 @@ const reducer = function (state = initialState, action) {
 
     if (action.type === Constants.GET_DETAILS_RESPONSE) {
         const validation = ParseValidation(action.response);
+        console.log('GET_DETAILS_RESPONSE')
+        console.log(action.response);
 
         return ObjectAssign({}, state, {
             loading: false,
@@ -44,7 +48,8 @@ const reducer = function (state = initialState, action) {
             error: validation.error,
             hasError: validation.hasError,
             help: validation.help,
-            name: action.response.name
+            name: action.response.name,
+            details: action.response.details
         });
     }
 

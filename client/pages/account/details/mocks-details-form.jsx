@@ -8,6 +8,7 @@ const PropTypes = require('prop-types');
 const React = require('react');
 const Spinner = require('../../../components/form/spinner.jsx');
 const TextControl = require('../../../components/form/text-control.jsx');
+const SelectControl = require('../../../components/form/select-control.jsx');
 
 
 const propTypes = {
@@ -39,31 +40,56 @@ class DetailsForm extends React.Component {
 
         super(props);
 
+        // TODO: Inititiate the details
         this.state = {
-            name: props.name,
-            details: props.details
+            username: props.username
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    onSelectChange(event) {
+        console.log('onSelectChange')
+        //this.setState({ page: '1' }, this.props.onChange.bind(this));
+    }
 
+    componentWillReceiveProps(nextProps) {
+        console.log('componentWillReceiveProps')
+        console.log(nextProps)
+
+        // jl: TODO review: I need to init detailsOfBirth to avoid error firt time
+        // the form is loaded.
         this.setState({
-            name: nextProps.name,
+            username: nextProps.username,
             details: nextProps.details
         });
+        console.log('NEW STATE!!!')
+        console.log(this.state)
     }
 
     handleSubmit(event) {
 
+        console.log('handleSubmit ');
+        console.log(this.state);
+
         event.preventDefault();
         event.stopPropagation();
 
-        Actions.saveDetails({
-            name: this.state.name
+        Actions.saveMocksDetails( {
+            details : {
+                dateOfBirth: this.state.details.dateOfBirth,
+                location: this.state.details.location,
+                ethnicity: this.state.details.ethnicity,
+                cycle:  this.state.details.cycle,
+                exam: this.state.details.exams,
+                userType: this.state.details.userType
+            }
         });
+
     }
 
     render() {
+
+        console.log("RENDER --> details are:")
+        console.log(this.state)
 
         if (!this.props.hydrated) {
             return (
@@ -93,64 +119,118 @@ class DetailsForm extends React.Component {
         }
 
         return (
-            <form onSubmit={this.handleSubmit.bind(this)}>
+            <form
+                onSubmit={this.handleSubmit.bind(this)}>
                 <fieldset>
                     <legend>Additional info</legend>
                     {alerts}
+
+                    {this.props.username}
+
                     <TextControl
                         name="details.dateOfBirth"
                         label="Date of birth"
+                        type="date"
                         value={this.state.details.dateOfBirth}
                         onChange={LinkState.bind(this)}
                         hasError={this.props.hasError['details.dateOfBirth']}
                         help={this.props.help['details.dateOfBirth']}
                         disabled={this.props.loading}
                     />
-                    <TextControl
+
+                    <SelectControl
                         name="details.location"
                         label="Location"
                         value={this.state.details.location}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['details.location']}
-                        help={this.props.help['details.location']}
-                        disabled={this.props.loading}
-                    />
-                    <TextControl
+                        disabled={this.props.loading}>
+                           <option value="antrim">Antrim</option>
+                           <option value="armagh">Armagh</option>
+                           <option value="carlow">Carlow</option>
+                           <option value="cavan">Cavan</option>
+                           <option value="clare">Clare</option>
+                           <option value="cork">Cork</option>
+                           <option value="derry">Derry</option>
+                           <option value="donegal">Donegal</option>
+                           <option value="down">Down</option>
+                           <option value="dublin">Dublin</option>
+                           <option value="fermanagh">Fermanagh</option>
+                           <option value="galway">Galway</option>
+                           <option value="kerry">Kerry</option>
+                           <option value="kildare">Kildare</option>
+                           <option value="kilkenny">Kilkenny</option>
+                           <option value="laois">Laois</option>
+                           <option value="leitrim">Leitrim</option>
+                           <option value="limerick">Limerick</option>
+                           <option value="longford">Longford</option>
+                           <option value="louth">Louth</option>
+                           <option value="mayo">Mayo</option>
+                           <option value="meath">Meath</option>
+                           <option value="monaghan">Monaghan</option>
+                           <option value="offaly">Offaly</option>
+                           <option value="roscommon">Roscommon</option>
+                           <option value="sligo">Sligo</option>
+                           <option value="tipperary">Tipperary</option>
+                           <option value="tyrone">Tyrone</option>
+                           <option value="waterford">Waterford</option>
+                           <option value="westmeath">Westmeath</option>
+                           <option value="wexford">Wexford</option>
+                           <option value="wicklow">Wicklow</option>
+                    </SelectControl>
+
+                    <SelectControl
                         name="details.ethnicity"
                         label="Ethnicity"
                         value={this.state.details.ethnicity}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['details.ethnicity']}
-                        help={this.props.help['details.ethnicity']}
-                        disabled={this.props.loading}
-                    />
-                    <TextControl
+                        disabled={this.props.loading}>
+                           <option value="caucasian">Caucasian</option>
+                           <option value="asian">Asian</option>
+                           <option value="black">Black</option>
+                    </SelectControl>
+
+                    <SelectControl
                         name="details.cycle"
                         label="Cycle"
                         value={this.state.details.cycle}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['details.cycle']}
-                        help={this.props.help['details.cycle']}
-                        disabled={this.props.loading}
-                    />
-                    <TextControl
+                        disabled={this.props.loading}>
+                        <option value="leaving">Leaving</option>
+                        <option value="junior">Junior</option>
+                    </SelectControl>
+
+                    <SelectControl
                         name="details.exam"
                         label="Exam"
                         value={this.state.details.exam}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['details.exam']}
-                        help={this.props.help['details.exam']}
-                        disabled={this.props.loading}
-                    />
-                    <TextControl
+                        disabled={this.props.loading}>
+                        <option value="2018">2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                        <option value="2023">2023</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                        <option value="2030">2030</option>
+                    </SelectControl>
+
+                    <SelectControl
                         name="details.userType"
                         label="User Type"
                         value={this.state.details.userType}
                         onChange={LinkState.bind(this)}
-                        hasError={this.props.hasError['details.userType']}
-                        help={this.props.help['details.userType']}
-                        disabled={this.props.loading}
-                    />
+                        disabled={this.props.loading}>
+                        <option value="student">Student</option>
+                        <option value="parent">Parent</option>
+                        <option value="teacher">Teacher</option>
+                    </SelectControl>
+
                     <TextControl
                         name="details.subjects"
                         label="Subjects"
@@ -160,14 +240,14 @@ class DetailsForm extends React.Component {
                         help={this.props.help['details.subjects']}
                         disabled={this.props.loading}
                     />
-                
+
                     <ControlGroup hideLabel={true} hideHelp={true}>
                         <Button
                             type="submit"
                             inputClasses={{ 'btn-primary': true }}
                             disabled={this.props.loading}>
 
-                            Update contact info
+                            Update my details
                             <Spinner
                                 space="left"
                                 show={this.props.loading}

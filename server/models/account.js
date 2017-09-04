@@ -52,6 +52,15 @@ Account.schema = Joi.object().keys({
         middle: Joi.string().allow(''),
         last: Joi.string().required()
     }),
+    details: Joi.object().keys({
+        dateOfBirth: Joi.string(),
+        location: Joi.string(),
+        ethnicity: Joi.string(),
+        cycle: Joi.string(),
+        exam: Joi.string(),
+        userType: Joi.string(),
+        subjects: Joi.string()
+    }),
     status: Joi.object().keys({
         current: StatusEntry.schema,
         log: Joi.array().items(StatusEntry.schema)

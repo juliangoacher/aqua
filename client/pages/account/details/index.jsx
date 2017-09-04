@@ -17,6 +17,8 @@ class SettingsPage extends React.Component {
         Actions.getUser();
 
         this.state = Store.getState();
+        console.log("Setting pages STATE: ")
+        console.log(this.state)
     }
 
     componentDidMount() {
@@ -42,7 +44,7 @@ class SettingsPage extends React.Component {
                 <div className="row">
                     <div className="col-sm-6">
                         <UserForm {...this.state.user} />
-                        <MocksDetailsForm {...this.state.details} />
+                        <MocksDetailsForm {...this.state.details} username={this.state.user.username} />
                     </div>
                 </div>
             </section>
