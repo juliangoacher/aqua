@@ -48,6 +48,7 @@ class DetailsForm extends React.Component {
 
     onSelectChange(event) {
         console.log('onSelectChange')
+        // TODO: remove, not needed as not pages
         //this.setState({ page: '1' }, this.props.onChange.bind(this));
     }
 
@@ -61,8 +62,7 @@ class DetailsForm extends React.Component {
             username: nextProps.username,
             details: nextProps.details
         });
-        console.log('NEW STATE!!!')
-        console.log(this.state)
+
     }
 
     handleSubmit(event) {

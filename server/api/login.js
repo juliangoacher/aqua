@@ -14,6 +14,7 @@ internals.applyRoutes = function (server, next) {
     const AuthAttempt = server.plugins['hapi-mongo-models'].AuthAttempt;
     const Session = server.plugins['hapi-mongo-models'].Session;
     const User = server.plugins['hapi-mongo-models'].User;
+    const Account = server.plugins['hapi-mongo-models'].Account;
 
     // server.auth.strategy('twitter', 'bell', {
     //   provider: 'twitter',
@@ -129,8 +130,8 @@ internals.applyRoutes = function (server, next) {
     });
 
     server.route({
-        method: ['GET', 'POST'], // Must handle both GET and POST
-        path: '/login-facebook',          // The callback endpoint registered with the provider
+        method: ['GET', 'POST'],            // Must handle both GET and POST
+        path: '/login-facebook',            // The callback endpoint registered with the provider
         config: {
             auth: {
                 mode: 'try',
@@ -142,50 +143,193 @@ internals.applyRoutes = function (server, next) {
             console.log(request.auth)
 
             if (!request.auth.isAuthenticated) {
-                // TODO: check the errror is correcty returned
-                return reply({ err : request.auth.error.message });
+                return reply({ err : 'Authentication failed due to: ' + request.auth.error.message });
             }
 
             console.log('facebook user is authenticated!');
+            console.log(JSON.stringify(request.auth.credentials, null, 4))
 
-            var username =  request.auth.credentials.profile;
-            //console.log(username);
-            //console.log(request)
+            const mailer = request.server.plugins.mailer;
+            const facebookProfile =  request.auth.credentials.profile;
 
-            const userId = username.id;
-            Session.create(userId.toString(), (err, session) => {
 
-                console.log('*****session created!')
-                console.log(session)
+            /*
+            "profile": {
+              "id": "1518514758204670",
+              "displayName": "Javier Loriente",
+              "name": {
+                  "first": "Javier",
+                  "last": "Loriente"
+              },
+              "email": "jloriente@gmail.com",
+              "raw": {
+                  "id": "1518514758204670",
+                  "name": "Javier Loriente",
+                  "email": "jloriente@gmail.com",
+                  "first_name": "Javier",
+                  "last_name": "Loriente",
+                  "gender": "male",
+                  "link": "https://www.facebook.com/app_scoped_user_id/1518514758204670/",
+                  "locale": "en_US",
+                  "timezone": 2,
+                  "updated_time": "2015-06-07T03:09:22+0000",
+                  "verified": true
+              }
+            }
+            */
+
+            // We use the email as the username TODO contact name + surname
+            const username = facebookProfile.email;
+            const password = '';
+            const email = facebookProfile.email;
+            const name = facebookProfile.raw.name;
+
+            // Compose the object to create the account
+            Async.auto({
+                user: function (done) {
+                    console.log('create user...')
+
+                    User.create(username, password, email, done);
+                },
+                account: ['user', function (results, done) {
+                    console.log('create account...')
+
+                    Account.create(name, done);
+                }],
+                linkUser: ['account', function (results, done) {
+
+                    console.log('link user...')
+                    const id = results.account._id.toString();
+                    const update = {
+                        $set: {
+                            user: {
+                                id: results.user._id.toString(),
+                                name: results.user.username
+                            }
+                        }
+                    };
+
+                    Account.findByIdAndUpdate(id, update, done);
+                }],
+                linkAccount: ['account', function (results, done) {
+
+                    console.log('link account...')
+
+                    const id = results.user._id.toString();
+                    const update = {
+                        $set: {
+                            roles: {
+                                account: {
+                                    id: results.account._id.toString(),
+                                    name: results.account.name.first + ' ' + results.account.name.last
+                                }
+                            }
+                        }
+                    };
+
+                    User.findByIdAndUpdate(id, update, done);
+                }],
+                welcome: ['linkUser', 'linkAccount', function (results, done) {
+
+                    console.log('welcome...')
+
+                    const emailOptions = {
+                        subject: 'Your ' + Config.get('/projectName') + ' account',
+                        to: {
+                            name: name,
+                            address: email
+                        }
+                    };
+                    const template = 'welcome';
+
+                    mailer.sendEmail(emailOptions, template, request.payload, (err) => {
+
+                        if (err) {
+                            console.warn('sending welcome email failed:', err.stack);
+                        }
+                    });
+
+                    done();
+                }],
+                session: ['linkUser', 'linkAccount', function (results, done) {
+
+                    console.log('session...')
+
+                    Session.create(results.user._id.toString(), done);
+                }]
+            }, (err, results) => {
+
+                console.log('END!!!')
 
                 if (err) {
                     return reply(err);
                 }
 
-                const credentials = userId + ':' + session.key;
+                const user = results.linkAccount;
+                const credentials = user.username + ':' + results.session.key;
                 const authHeader = 'Basic ' + new Buffer(credentials).toString('base64');
-
                 const result = {
                     user: {
-                        _id: userId,
-                        username: username.username || username.displayName || name.firts + " " + name.last,
-                        email: username.email,
-                        roles: ''
+                        _id: user._id,
+                        username: user.username,
+                        email: user.email,
+                        roles: user.roles
                     },
-                    session: session,
+                    session: results.session,
                     authHeader
                 };
 
-                console.log('the result is:')
-                console.log(result);
-
-                // Set the session object
                 request.cookieAuth.set(result);
-
-                return reply(result);
-                //return reply.redirect('/login');
-                //return reply.redirect('/')
+                //reply(result);
+                reply.redirect('/account');
             });
+
+
+
+            // Insert in db:
+            // - Check if user is in db
+            // - id not in db: create user using email
+
+            // 1- Check if fb user exist otherwise create TODO: check if exist
+            // 2- Create the user in db
+
+
+            // Create an Hapi session TODO: Replace with inserting in the db
+            const userId = username.id;
+            // Session.create(userId.toString(), (err, session) => {
+            //
+            //     console.log('*****session created!')
+            //     console.log(session)
+            //
+            //     if (err) {
+            //         return reply(err);
+            //     }
+            //
+            //     const credentials = userId + ':' + session.key;
+            //     const authHeader = 'Basic ' + new Buffer(credentials).toString('base64');
+            //
+            //     const result = {
+            //         user: {
+            //             _id: userId,
+            //             username: username.username || username.displayName || name.firts + " " + name.last,
+            //             email: username.email,
+            //             roles: ''
+            //         },
+            //         session: session,
+            //         authHeader
+            //     };
+            //
+            //     console.log('Session created! The sesssion result is: ')
+            //     console.log(result);
+            //
+            //     // Set the session object
+            //     request.cookieAuth.set(result);
+            //
+            //     return reply(result);
+            //     //return reply.redirect('/login');
+            //     //return reply.redirect('/')
+            //     //return reply.redirect('/account');
+            // });
 
         }
     });

@@ -114,6 +114,9 @@ class Form extends React.Component {
                         <Spinner space="left" show={this.state.loading} />
                     </Button>
                 </ControlGroup>
+
+                <a href="/api/login-facebook" className="btn btn-info btn-block">Facebook login</a>
+
             </fieldset>;
         }
 
