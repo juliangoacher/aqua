@@ -91,6 +91,12 @@ class DetailsForm extends React.Component {
         console.log("RENDER --> details are:")
         console.log(this.state)
 
+        if (!this.state.details){
+            this.state.details = {}
+        }
+
+
+
         if (!this.props.hydrated) {
             return (
                 <div className="alert alert-info">
@@ -122,10 +128,8 @@ class DetailsForm extends React.Component {
             <form
                 onSubmit={this.handleSubmit.bind(this)}>
                 <fieldset>
-                    <legend>Additional info</legend>
+                    <legend>General info</legend>
                     {alerts}
-
-                    {this.props.username}
 
                     <TextControl
                         name="details.dateOfBirth"
@@ -144,6 +148,8 @@ class DetailsForm extends React.Component {
                         value={this.state.details.location}
                         onChange={LinkState.bind(this)}
                         disabled={this.props.loading}>
+
+                           <option value="">-- choose--</option>
                            <option value="antrim">Antrim</option>
                            <option value="armagh">Armagh</option>
                            <option value="carlow">Carlow</option>
@@ -184,9 +190,26 @@ class DetailsForm extends React.Component {
                         value={this.state.details.ethnicity}
                         onChange={LinkState.bind(this)}
                         disabled={this.props.loading}>
+
+                           <option value="">-- choose--</option>
                            <option value="caucasian">Caucasian</option>
                            <option value="asian">Asian</option>
                            <option value="black">Black</option>
+                    </SelectControl>
+
+                    <legend>Studies info</legend>
+
+                    <SelectControl
+                        name="details.userType"
+                        label="User Type"
+                        value={this.state.details.userType}
+                        onChange={LinkState.bind(this)}
+                        disabled={this.props.loading}>
+
+                        <option value="">-- choose--</option>
+                        <option value="student">Student</option>
+                        <option value="parent">Parent</option>
+                        <option value="teacher">Teacher</option>
                     </SelectControl>
 
                     <SelectControl
@@ -195,6 +218,8 @@ class DetailsForm extends React.Component {
                         value={this.state.details.cycle}
                         onChange={LinkState.bind(this)}
                         disabled={this.props.loading}>
+
+                        <option value="">-- choose--</option>
                         <option value="leaving">Leaving</option>
                         <option value="junior">Junior</option>
                     </SelectControl>
@@ -205,6 +230,8 @@ class DetailsForm extends React.Component {
                         value={this.state.details.exam}
                         onChange={LinkState.bind(this)}
                         disabled={this.props.loading}>
+
+                        <option value="">-- choose--</option>
                         <option value="2018">2018</option>
                         <option value="2019">2019</option>
                         <option value="2020">2020</option>
@@ -220,16 +247,7 @@ class DetailsForm extends React.Component {
                         <option value="2030">2030</option>
                     </SelectControl>
 
-                    <SelectControl
-                        name="details.userType"
-                        label="User Type"
-                        value={this.state.details.userType}
-                        onChange={LinkState.bind(this)}
-                        disabled={this.props.loading}>
-                        <option value="student">Student</option>
-                        <option value="parent">Parent</option>
-                        <option value="teacher">Teacher</option>
-                    </SelectControl>
+                    <legend>Subjects</legend>
 
                     <TextControl
                         name="details.subjects"

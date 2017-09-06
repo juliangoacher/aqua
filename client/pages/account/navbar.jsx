@@ -71,7 +71,7 @@ class Navbar extends React.Component {
                                 <Link to="/account/settings">Settings</Link>
                             </li>
                             <li className={this.classForPath('/account/details')}>
-                                <Link to="/account/details">Account details</Link>
+                                <Link to="/account/details">Personal details</Link>
                             </li>
                         </ul>
                         <ul className="nav navbar-nav navbar-right">

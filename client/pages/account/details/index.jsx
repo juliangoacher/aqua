@@ -40,10 +40,10 @@ class SettingsPage extends React.Component {
 
         return (
             <section className="container">
-                <h1 className="page-header">Account settings</h1>
+                <h1 className="page-header">Personal details</h1>
                 <div className="row">
                     <div className="col-sm-6">
-                        <UserForm {...this.state.user} />
+                        {/* <UserForm {...this.state.user} /> */}
                         <MocksDetailsForm {...this.state.details} username={this.state.user.username} />
                     </div>
                 </div>
