@@ -22,6 +22,7 @@ class MainPage extends React.Component {
                     <link rel="stylesheet" href="/public/core.min.css" />
                     <link rel="stylesheet" href="/public/pages/main.min.css" />
                     <link rel="shortcut icon" href="/public/media/favicon.ico" />
+                    <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css" />
                     {this.props.helmet.link.toComponent()}
                 </head>
                 <body>
@@ -37,6 +38,7 @@ class MainPage extends React.Component {
                     />
                     <script src="/public/core.min.js"></script>
                     <script src="/public/pages/main.min.js"></script>
+
                 </body>
             </html>
         );

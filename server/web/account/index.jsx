@@ -13,6 +13,7 @@ class AccountPage extends React.Component {
                     <link rel="stylesheet" href="/public/core.min.css" />
                     <link rel="stylesheet" href="/public/pages/account.min.css" />
                     <link rel="shortcut icon" href="/public/media/favicon.ico" />
+                    <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css" />
                 </head>
                 <body>
                     <div id="app-mount"></div>

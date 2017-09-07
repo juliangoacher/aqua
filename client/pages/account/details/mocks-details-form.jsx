@@ -9,7 +9,8 @@ const React = require('react');
 const Spinner = require('../../../components/form/spinner.jsx');
 const TextControl = require('../../../components/form/text-control.jsx');
 const SelectControl = require('../../../components/form/select-control.jsx');
-
+const MultiselectControl = require('../../../components/form/multiselect-control.jsx');
+const Select = require('react-select');
 
 const propTypes = {
     error: PropTypes.string,
@@ -29,7 +30,11 @@ const propTypes = {
         cycle: PropTypes.string,
         exam: PropTypes.string,
         userType: PropTypes.string,
-        subjects: PropTypes.string              // this is an array  []
+        subjects: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.object,
+            PropTypes.string
+        ])
     }),
     showSaveSuccess: PropTypes.bool
 };
@@ -65,9 +70,18 @@ class DetailsForm extends React.Component {
 
     }
 
+    handleSelectChange (value) {
+
+        console.log('You\'ve selected:', value);
+        console.log(this.state);
+
+        this.state.details.subjects = { value };
+        this.setState( {value} );
+    }
+
     handleSubmit(event) {
 
-        console.log('handleSubmit ');
+        console.log('handleSubmit!!!');
         console.log(this.state);
 
         event.preventDefault();
@@ -80,7 +94,8 @@ class DetailsForm extends React.Component {
                 ethnicity: this.state.details.ethnicity,
                 cycle:  this.state.details.cycle,
                 exam: this.state.details.exams,
-                userType: this.state.details.userType
+                userType: this.state.details.userType,
+                subjects: this.state.details.subjects.value
             }
         });
 
@@ -249,7 +264,14 @@ class DetailsForm extends React.Component {
 
                     <legend>Subjects</legend>
 
-                    <TextControl
+                    <MultiselectControl
+                        name="details.subjects"
+                        onChange={this.handleSelectChange.bind(this)}
+                        value={this.state.details.subjects} />
+
+                    <br></br>
+
+                    {/*    <TextControl
                         name="details.subjects"
                         label="Subjects"
                         value={this.state.details.subjects}
@@ -258,6 +280,7 @@ class DetailsForm extends React.Component {
                         help={this.props.help['details.subjects']}
                         disabled={this.props.loading}
                     />
+                    */}
 
                     <ControlGroup hideLabel={true} hideHelp={true}>
                         <Button
