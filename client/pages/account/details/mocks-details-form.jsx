@@ -30,12 +30,12 @@ const propTypes = {
         cycle: PropTypes.string,
         exam: PropTypes.string,
         userType: PropTypes.string,
-        subjects: PropTypes.oneOfType([
-            PropTypes.bool,
-            PropTypes.object,
-            PropTypes.string
-        ])
     }),
+    subjects: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.object,
+        PropTypes.string
+    ]),
     showSaveSuccess: PropTypes.bool
 };
 
@@ -65,7 +65,8 @@ class DetailsForm extends React.Component {
         // the form is loaded.
         this.setState({
             username: nextProps.username,
-            details: nextProps.details
+            details: nextProps.details,
+            subjects: nextProps.subjects
         });
 
     }
@@ -75,8 +76,9 @@ class DetailsForm extends React.Component {
         console.log('You\'ve selected:', value);
         console.log(this.state);
 
-        this.state.details.subjects = { value };
-        this.setState( {value} );
+        //this.state.details.subjects = { value };
+        //this.setState({details:{ subjects: value}});
+        this.setState( {subjects: value} )
     }
 
     handleSubmit(event) {
@@ -94,9 +96,9 @@ class DetailsForm extends React.Component {
                 ethnicity: this.state.details.ethnicity,
                 cycle:  this.state.details.cycle,
                 exam: this.state.details.exams,
-                userType: this.state.details.userType,
-                subjects: this.state.details.subjects.value
-            }
+                userType: this.state.details.userType
+            },
+            subjects: this.state.subjects
         });
 
     }
@@ -109,8 +111,6 @@ class DetailsForm extends React.Component {
         if (!this.state.details){
             this.state.details = {}
         }
-
-
 
         if (!this.props.hydrated) {
             return (
@@ -265,9 +265,9 @@ class DetailsForm extends React.Component {
                     <legend>Subjects</legend>
 
                     <MultiselectControl
-                        name="details.subjects"
+                        name="subjects"
                         onChange={this.handleSelectChange.bind(this)}
-                        value={this.state.details.subjects} />
+                        value={this.state.subjects} />
 
                     <br></br>
 

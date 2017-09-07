@@ -96,7 +96,7 @@ internals.applyRoutes = function (server, next) {
         handler: function (request, reply) {
 
             const id = request.auth.credentials.roles.account._id.toString();
-            const fields = Account.fieldsAdapter('user name timeCreated details');
+            const fields = Account.fieldsAdapter('user name timeCreated details subjects');
 
             Account.findById(id, fields, (err, account) => {
 
@@ -244,9 +244,9 @@ internals.applyRoutes = function (server, next) {
                         location: Joi.string().allow(''),
                         ethnicity: Joi.string().allow(''),
                         cycle: Joi.string().allow(''),
-                        userType: Joi.string().allow(''),
-                        subjects: Joi.string().allow('')
-                    }).required()
+                        userType: Joi.string().allow('')
+                    }).required(),
+                    subjects: Joi.string().allow('')
                 }
             }
         },
@@ -256,11 +256,12 @@ internals.applyRoutes = function (server, next) {
             const id = request.auth.credentials.roles.account._id.toString();
             const update = {
                 $set: {
-                    details: request.payload.details
+                    details: request.payload.details,
+                    subjects: request.payload.subjects
                 }
             };
             const findOptions = {
-                fields: Account.fieldsAdapter('user timeCreated details')
+                fields: Account.fieldsAdapter('user timeCreated details subjects')
             };
             console.log('--> update:')
             console.log(update);

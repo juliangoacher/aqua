@@ -24,7 +24,8 @@ const initialState = {
         exam: '',
         userType: '',
         subjects: ''
-    }
+    },
+    subjects: ''
 };
 const reducer = function (state = initialState, action) {
 
@@ -49,14 +50,15 @@ const reducer = function (state = initialState, action) {
             hasError: validation.hasError,
             help: validation.help,
             name: action.response.name,
-            details: action.response.details
+            details: action.response.details,
+            subjects: action.response.subjects
         });
     }
 
     if (action.type === Constants.SAVE_DETAILS) {
         return ObjectAssign({}, state, {
             loading: true,
-            name: action.request.data.name
+            name: action.request.data.name,
         });
     }
 
@@ -67,7 +69,9 @@ const reducer = function (state = initialState, action) {
             showSaveSuccess: !action.err,
             error: validation.error,
             hasError: validation.hasError,
-            help: validation.help
+            help: validation.help,
+            details: action.response.details,
+            subjects: action.response.subjects
         };
 
         if (action.response.hasOwnProperty('name')) {
