@@ -95,7 +95,7 @@ class DetailsForm extends React.Component {
                 location: this.state.details.location,
                 ethnicity: this.state.details.ethnicity,
                 cycle:  this.state.details.cycle,
-                exam: this.state.details.exams,
+                exam: this.state.details.exam,
                 userType: this.state.details.userType
             },
             subjects: this.state.subjects

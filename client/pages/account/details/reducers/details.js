@@ -62,6 +62,8 @@ const reducer = function (state = initialState, action) {
         });
     }
 
+    // jl comment: the details and subjects has been added so after the
+    // element saves the fields update NOTE: This may not be required
     if (action.type === Constants.SAVE_DETAILS_RESPONSE) {
         const validation = ParseValidation(action.response);
         const stateUpdates = {

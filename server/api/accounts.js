@@ -244,6 +244,7 @@ internals.applyRoutes = function (server, next) {
                         location: Joi.string().allow(''),
                         ethnicity: Joi.string().allow(''),
                         cycle: Joi.string().allow(''),
+                        exam: Joi.string().allow(''),
                         userType: Joi.string().allow('')
                     }).required(),
                     subjects: Joi.string().allow('')
