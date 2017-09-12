@@ -47,7 +47,8 @@ class DetailsForm extends React.Component {
 
         // TODO: Inititiate the details
         this.state = {
-            username: props.username
+            username: props.username,
+            subjects: ''
         };
     }
 
@@ -111,6 +112,9 @@ class DetailsForm extends React.Component {
         if (!this.state.details){
             this.state.details = {}
         }
+
+        // Required to avoid PUT operations with a null Subjects
+        if (!this.state.subjects) this.state.subjects = '';
 
         if (!this.props.hydrated) {
             return (
@@ -241,7 +245,7 @@ class DetailsForm extends React.Component {
 
                     <SelectControl
                         name="details.exam"
-                        label="Exam"
+                        label="Exam Year"
                         value={this.state.details.exam}
                         onChange={LinkState.bind(this)}
                         disabled={this.props.loading}>

@@ -22,8 +22,7 @@ const initialState = {
         ethnicity: '',
         cycle: '',
         exam: '',
-        userType: '',
-        subjects: ''
+        userType: ''
     },
     subjects: ''
 };

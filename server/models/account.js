@@ -58,9 +58,9 @@ Account.schema = Joi.object().keys({
         ethnicity: Joi.string(),
         cycle: Joi.string(),
         exam: Joi.string(),
-        userType: Joi.string(),
-        subjects: Joi.string()
+        userType: Joi.string()
     }),
+    subjects: Joi.string(),
     status: Joi.object().keys({
         current: StatusEntry.schema,
         log: Joi.array().items(StatusEntry.schema)
