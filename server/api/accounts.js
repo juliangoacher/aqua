@@ -252,13 +252,14 @@ internals.applyRoutes = function (server, next) {
             }
         },
         handler: function (request, reply) {
-            console.log('***server/api/accounts');
+            console.log('***server/api/accounts.js /accounts/my/mocks');
 
             const id = request.auth.credentials.roles.account._id.toString();
             const update = {
                 $set: {
                     details: request.payload.details,
-                    subjects: request.payload.subjects
+                    subjects: request.payload.subjects,
+                    isFacebookUser: true
                 }
             };
             const findOptions = {

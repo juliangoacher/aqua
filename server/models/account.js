@@ -47,6 +47,8 @@ Account.schema = Joi.object().keys({
         id: Joi.string().required(),
         name: Joi.string().lowercase().required()
     }),
+    isFacebookUser: Joi.boolean(),
+    facebookProfile: Joi.object(),
     name: Joi.object().keys({
         first: Joi.string().required(),
         middle: Joi.string().allow(''),
