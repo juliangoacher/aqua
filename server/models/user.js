@@ -179,6 +179,7 @@ User.collection = 'users';
 User.schema = Joi.object().keys({
     _id: Joi.object(),
     isActive: Joi.boolean().default(true),
+    isFacebookAccount: Joi.boolean().default(false),
     username: Joi.string().token().lowercase().required(),
     password: Joi.string(),
     email: Joi.string().email().lowercase().required(),
@@ -189,7 +190,8 @@ User.schema = Joi.object().keys({
         }),
         account: Joi.object().keys({
             id: Joi.string().required(),
-            name: Joi.string().required()
+            name: Joi.string().required(),
+            isFacebookAccount: Joi.boolean().default(false),
         })
     }),
     resetPassword: Joi.object().keys({

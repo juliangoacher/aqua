@@ -52,21 +52,21 @@ internals.applyRoutes = function (server, next) {
     */
 
     /**
-    * Create a facebook user/account in aqua:
-    *  Used for facebook auth: When user auth with facebook a user/account is
-    *  created in aqua. The account has a flag isFacebookUser set to true to
-    *  identify the facebook account in the sytem.
+    * Create a facebook user/account in aqua: When user auth with facebook a newUser
+    *  Account and User are created in db.
+    *  The account has a flag isFacebookUser set to true, also an object with the
+    *  full facebook profile in stored (may be useful at a later point)
     **/
     function createFacebookAccount(request, reply){
         const mailer = request.server.plugins.mailer;
         const facebookProfile =  request.auth.credentials.profile;
 
+        // Use the email in the facebook account as the username (unique in facebook)
         const username = facebookProfile.email;
         const password = '';
         const email = facebookProfile.email;
         const name = facebookProfile.raw.name;
 
-        // Compose the object to create the account
         Async.auto({
             user: function (done) {
                 console.log('create user...')
@@ -105,9 +105,10 @@ internals.applyRoutes = function (server, next) {
                         roles: {
                             account: {
                                 id: results.account._id.toString(),
-                                name: results.account.name.first + ' ' + results.account.name.last
+                                name: results.account.name.first + ' ' + results.account.name.last,
                             }
-                        }
+                        },
+                        isFacebookAccount: true
                     }
                 };
 

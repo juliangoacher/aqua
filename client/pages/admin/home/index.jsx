@@ -61,10 +61,15 @@ class HomePage extends React.Component {
 
         // filter only active users
         var activeUsers = data.filter(function(user){
-            return user.isActive
+            return user.isActive;
         });
         var totalActive = activeUsers.length;
         console.log('Total Active users: ' + totalActive)
+
+        var facebookUser = data.filter(function(user){
+            return user.isFacebookAccount;
+        })
+        var totalFacebook = facebookUser.length;
 
         return (
             <section className="section-home container">
@@ -91,7 +96,7 @@ class HomePage extends React.Component {
                             <div className="col-sm-4">
                                 <div className="well text-center">
                                     <div className="stat-value">
-                                        0
+                                        {totalFacebook}
                                     </div>
                                     <div className="stat-label">FACEBOOK USERS</div>
                                 </div>

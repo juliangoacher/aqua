@@ -25,6 +25,7 @@ internals.applyRoutes = function (server, next) {
                 query: {
                     username: Joi.string().allow(''),
                     isActive: Joi.string().allow(''),
+                    isFacebookUser: Joi.string().allow(''),
                     role: Joi.string().allow(''),
                     fields: Joi.string(),
                     sort: Joi.string().default('_id'),
