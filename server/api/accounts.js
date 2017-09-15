@@ -258,8 +258,7 @@ internals.applyRoutes = function (server, next) {
             const update = {
                 $set: {
                     details: request.payload.details,
-                    subjects: request.payload.subjects,
-                    isFacebookUser: true
+                    subjects: request.payload.subjects
                 }
             };
             const findOptions = {
