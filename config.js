@@ -48,22 +48,22 @@ const config = {
         autoIndex: true
     },
     nodemailer: {
-        host: 'smtp.gmail.com',
+        host: 'secure.emailsrvr.com',
         port: 465,
         secure: true,
         auth: {
-            user: 'jedireza@gmail.com',
+            user: 'info@innerfunction.com',
             pass: process.env.SMTP_PASSWORD
         }
     },
     system: {
         fromAddress: {
             name: 'Aqua',
-            address: 'jedireza@gmail.com'
+            address: 'info@innerfunction.com'
         },
         toAddress: {
             name: 'Aqua',
-            address: 'jedireza@gmail.com'
+             address: 'info@innerfunction.com'
         }
     }
 };
