@@ -1,0 +1,17 @@
+[Unit]
+Description=Aqua server
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=locomote
+Group=locomote
+WorkingDirectory=/home/locomote/workspace/aqua
+ExecStart=/home/locomote/workspace/aqua/bin/aqua
+Restart=always
+Environment=USER=locomote HOME=/home/locomote
+
+[Install]
+WantedBy=multi-user.target
+
