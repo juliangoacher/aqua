@@ -56,7 +56,7 @@ class LoginPage extends React.Component {
     }
 
     render() {
-        
+
         const alerts = [];
 
         if (this.state.success) {
@@ -119,9 +119,6 @@ class LoginPage extends React.Component {
                                 {alerts}
                                 {formElements}
                             </form>
-                            <Link to="/api/login-facebook" className="btn btn-info btn-block">
-                                NO Facebook login
-                            </Link>
                             <a href="/api/login-facebook" className="btn btn-info btn-block">Facebook login</a>
 
 
