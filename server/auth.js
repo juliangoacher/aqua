@@ -79,14 +79,15 @@ internals.applyStrategy = function (server, next) {
             password: 'cookie_encryption_password_secure',
             isSecure: false,
             //redirectTo: '/login',
-            // You'll need to go to https://developers.facebook.com/ and set up a
+            // You'll need to go to  h and set up a
             // Website application to get started
             // Once you create your app, fill out Settings and set the App Domains
             // Under Settings >> Advanced, set the Valid OAuth redirect URIs to include http://<yourdomain.com>/bell/door
             // and enable Client OAuth Login
             clientId: '115199272474609',
             clientSecret: '1ad8608299b69d88215da228fa4286f4',
-            location: server.info.uri
+            location: 'http://locomote.sh/api/login-facebook',
+            location-testing-notused: server.info.uri
     });
 
 
