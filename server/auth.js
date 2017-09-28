@@ -87,7 +87,7 @@ internals.applyStrategy = function (server, next) {
             // TODO: Use location-testing: server.info.uri when testing locally
             clientId: '115199272474609',
             clientSecret: '1ad8608299b69d88215da228fa4286f4',
-            location: 'http://locomote.sh/api/login-facebook'
+            location: 'http://locomote.sh'
     });
 
 
