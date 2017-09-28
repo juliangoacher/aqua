@@ -84,10 +84,10 @@ internals.applyStrategy = function (server, next) {
             // Once you create your app, fill out Settings and set the App Domains
             // Under Settings >> Advanced, set the Valid OAuth redirect URIs to include http://<yourdomain.com>/bell/door
             // and enable Client OAuth Login
+            // TODO: Use location-testing: server.info.uri when testing locally
             clientId: '115199272474609',
             clientSecret: '1ad8608299b69d88215da228fa4286f4',
-            location: 'http://locomote.sh/api/login-facebook',
-            location-testing-notused: server.info.uri
+            location: 'http://locomote.sh/api/login-facebook'
     });
 
 
