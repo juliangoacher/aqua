@@ -141,9 +141,10 @@ internals.applyRoutes = function (server, next) {
                         }
                     };
                     const template = 'welcome';
-
-                    mailer.sendEmail(emailOptions, template, request.payload, (err) => {
-
+                    
+                    // jloriente: Send an html email instead of the 
+                    mailer.sendEmailHTML(emailOptions, template, request.payload, (err) => {
+                        
                         if (err) {
                             console.warn('sending welcome email failed:', err.stack);
                         }

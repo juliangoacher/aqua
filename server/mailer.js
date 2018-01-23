@@ -17,6 +17,7 @@ internals.transport.use('compile', Markdown({ useEmbeddedImages: true }));
 internals.templateCache = {};
 
 
+
 internals.renderTemplate = function (signature, context, callback) {
 
     if (internals.templateCache[signature]) {
@@ -24,6 +25,26 @@ internals.renderTemplate = function (signature, context, callback) {
     }
 
     const filePath = __dirname + '/emails/' + signature + '.hbs.md';
+    const options = { encoding: 'utf-8' };
+
+    Fs.readFile(filePath, options, (err, source) => {
+
+        if (err) {
+            return callback(err);
+        }
+
+        internals.templateCache[signature] = Handlebars.compile(source);
+        callback(null, internals.templateCache[signature](context));
+    });
+};
+
+internals.renderTemplateHTML = function (signature, context, callback) {
+
+    if (internals.templateCache[signature]) {
+        return callback(null, internals.templateCache[signature](context));
+    }
+
+    const filePath = __dirname + '/emails-html/' + signature + '.html';
     const options = { encoding: 'utf-8' };
 
     Fs.readFile(filePath, options, (err, source) => {
@@ -55,10 +76,27 @@ internals.sendEmail = function (options, template, context, callback) {
     });
 };
 
+internals.sendEmailHTML = function (options, template, context, callback) {
+
+    internals.renderTemplateHTML(template, context, (err, content) => {
+
+        if (err) {
+            return callback(err);
+        }
+
+        options = Hoek.applyToDefaults(options, {
+            from: Config.get('/system/fromAddress'),
+            html: content
+        });
+
+        internals.transport.sendMail(options, callback);
+    });
+};
 
 exports.register = function (server, options, next) {
 
     server.expose('sendEmail', internals.sendEmail);
+    server.expose('sendEmailHTML', internals.sendEmailHTML);
     server.expose('transport', internals.transport);
 
     next();
