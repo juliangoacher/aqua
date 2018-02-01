@@ -45,6 +45,7 @@
     "react-select": "^1.0.0-rc.5",
     "redux": "3.x.x",
     "slug": "0.9.x",
+    "stripe": "^5.4.0",
     "uuid": "3.x.x",
     "vision": "4.x.x",
     "visionary": "6.x.x"

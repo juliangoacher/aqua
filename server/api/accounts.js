@@ -5,6 +5,8 @@ const Boom = require('boom');
 const EscapeRegExp = require('escape-string-regexp');
 const Joi = require('joi');
 
+var stripe = require("stripe")(process.env.STRIPE_SECRET);
+
 
 const internals = {};
 
@@ -96,7 +98,7 @@ internals.applyRoutes = function (server, next) {
         handler: function (request, reply) {
 
             const id = request.auth.credentials.roles.account._id.toString();
-            const fields = Account.fieldsAdapter('user name timeCreated details subjects notes status');
+            const fields = Account.fieldsAdapter('user name timeCreated details subjects notes status accountPlan stripe');
 
             Account.findById(id, fields, (err, account) => {
 
@@ -280,6 +282,103 @@ internals.applyRoutes = function (server, next) {
         }
     });
 
+    // jloriente: added to support stripe payments
+    server.route({
+        method: 'PUT',
+        path: '/accounts/plan/subscribe',
+        config: {
+            auth: {
+                strategy: 'session',
+                scope: 'account'
+            },
+            validate: {
+                payload: {
+                    email: Joi.string().allow(''),
+                    plan: Joi.string().required(),
+                    token: Joi.string().allow(''),
+                    stripeCustomerId: Joi.string().allow('')
+                }
+            }
+        },
+        handler: function (request, reply) {
+            console.log('***server/api/accounts.js /accounts/stripe PUT');
+
+            // jloriente:
+            // if token is received then means it's a new customer with a new card (used the elements to get token in UI)
+            // if source then means it's stripe customer, not need to create user.
+            var plan = request.payload.plan;
+            var email = request.payload.email;      // used for new customers
+            var token = request.payload.token;
+            var customerId = request.payload.customerId;
+
+            console.log('/account/plan/subscribe email %s plan %s token: %s customerId %s', email, plan, token );
+
+            // only create if customer doesn't exist, check if customer alread exists?
+
+            // check if stripeCustomer already exist for that email (or token)
+            stripe.customers.create({
+                email: email,
+                source: token,
+            }).then( function( stripeCustomer) {
+                console.log('stipe customer created!')
+                console.log(stripeCustomer)
+                // YOUR CODE: Save the customer ID and other info in a database for later.
+
+                return stripe.subscriptions.create({
+                    customer: stripeCustomer.id,
+                    items: [{plan: plan}],
+                }).then( function( subscription ){
+                    console.log("subscription created!");
+                    console.log(subscription);
+
+                    const id = request.auth.credentials.roles.account._id.toString();
+                    // Set the status to account premium
+                    const update = {
+                        $set: {
+                            status: {
+                                current: {
+                                    id: 'account-premium'
+                                }
+                            },
+                            accountPlan : plan,
+                            stripe: {
+                                customer: stripeCustomer,
+                                subscription: subscription
+                            }
+                        }
+                    };
+                    const findOptions = {
+                        fields: Account.fieldsAdapter('user timeCreated details subjects accountPlan stripe')
+                    };
+                    console.log('--> update account with stripe info...')
+                    console.log(update);
+
+                    Account.findByIdAndUpdate(id, update, findOptions, (err, account) => {
+                        console.log('(RETURN) account is:')
+                        console.log(account)
+
+                        if (err) {
+                            return reply(err);
+                        }
+
+                        reply(account);
+                    });
+                },
+                function(err){
+                    if (err) {
+                        return reply(err);
+                    }
+                })
+            },
+            // Handling error creating a stripe customer
+            function(err){
+                if (err) {
+                    return reply(err);
+                }
+            }
+        );
+        }
+    });
 
     server.route({
         method: 'PUT',

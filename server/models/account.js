@@ -67,6 +67,8 @@ Account.schema = Joi.object().keys({
         current: StatusEntry.schema,
         log: Joi.array().items(StatusEntry.schema)
     }),
+    accountPlan: Joi.string(),
+    stripe: Joi.object(),
     notes: Joi.array().items(NoteEntry.schema),
     verification: Joi.object().keys({
         complete: Joi.boolean(),
