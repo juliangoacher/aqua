@@ -309,21 +309,15 @@ internals.applyRoutes = function (server, next) {
             var plan = request.payload.plan;
             var email = request.payload.email;      // used for new customers
             var token = request.payload.token;
-            var customerId = request.payload.customerId;
+            var stripeCustomerId = request.payload.stripeCustomerId;
 
-            console.log('/account/plan/subscribe email %s plan %s token: %s customerId %s', email, plan, token );
+            console.log('/account/plan/subscribe email %s plan %s token: %s stripeCustomerId %s', email, plan, token, stripeCustomerId );
 
-            // only create if customer doesn't exist, check if customer alread exists?
-
-            // check if stripeCustomer already exist for that email (or token)
-            stripe.customers.create({
-                email: email,
-                source: token,
-            }).then( function( stripeCustomer) {
-                console.log('stipe customer created!')
+            // callback function takes a full stripeCustomer object to update the db
+            function addSubscriptionToCustomer ( stripeCustomer) {
+                console.log('addSubscriptionToCustomer. Customer object:')
                 console.log(stripeCustomer)
                 // YOUR CODE: Save the customer ID and other info in a database for later.
-
                 return stripe.subscriptions.create({
                     customer: stripeCustomer.id,
                     items: [{plan: plan}],
@@ -364,19 +358,36 @@ internals.applyRoutes = function (server, next) {
                         reply(account);
                     });
                 },
-                function(err){
+                function(error){
+                    console.log('ERROR CATCHED')
+                    console.log(error)
+                    if (error) {
+                        error.stripeError = error.stack;
+                        return reply(error);
+                    }
+                })
+            }
+            // only create if customer doesn't exist, check if customer alread exists?
+
+            // check if stripeCustomer already exist for that email (or token)
+
+            if ( stripeCustomerId ){
+                console.log('is already a stripe customer id: ' + stripeCustomerId);
+                // if it's already a stripe customer: retrieve the stripe customer info, then add the customer to subscriptions
+                stripe.customers.retrieve(
+                    stripeCustomerId
+                ).then( addSubscriptionToCustomer );
+            }else{
+                // if is a new stripe customer: create a new stripe customer, then add the customer to subscription
+                stripe.customers.create({
+                    email: email,
+                    source: token,
+                }).then( addSubscriptionToCustomer, function(err){
                     if (err) {
                         return reply(err);
                     }
-                })
-            },
-            // Handling error creating a stripe customer
-            function(err){
-                if (err) {
-                    return reply(err);
-                }
+                });
             }
-        );
         }
     });
 
