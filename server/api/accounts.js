@@ -348,22 +348,26 @@ internals.applyRoutes = function (server, next) {
                     console.log(update);
 
                     Account.findByIdAndUpdate(id, update, findOptions, (err, account) => {
-                        console.log('(RETURN) account is:')
+                        console.log('Account updated with new subscription.')
                         console.log(account)
 
                         if (err) {
-                            return reply(err);
+                            console.log(err);
+                            return reply(Boom.notFound('Document not found.'));
                         }
 
                         reply(account);
                     });
                 },
                 function(error){
-                    console.log('ERROR CATCHED')
                     console.log(error)
                     if (error) {
-                        error.stripeError = error.stack;
-                        return reply(error);
+                        // TODO: error just return a generic server error
+                        // how to return also err msg from stripe?
+                        // next line won't work as expected and stripeError is not in response
+                        //error.stripeError = error.stack;
+                        //return reply(error.stack);
+                        return reply(Boom.notFound('Error creating a Stripe customer.'));
                     }
                 })
             }
@@ -372,7 +376,7 @@ internals.applyRoutes = function (server, next) {
             // check if stripeCustomer already exist for that email (or token)
 
             if ( stripeCustomerId ){
-                console.log('is already a stripe customer id: ' + stripeCustomerId);
+                console.log('CustomerId is already a stripe customer. StripeCustomerId: ' + stripeCustomerId);
                 // if it's already a stripe customer: retrieve the stripe customer info, then add the customer to subscriptions
                 stripe.customers.retrieve(
                     stripeCustomerId
@@ -384,13 +388,94 @@ internals.applyRoutes = function (server, next) {
                     source: token,
                 }).then( addSubscriptionToCustomer, function(err){
                     if (err) {
-                        return reply(err);
+                        return reply(Boom.notFound('Error adding Stripe Subscription to customer.'));
                     }
                 });
             }
         }
     });
 
+    // jloriente: added to support stripe payments
+    server.route({
+        method: 'PUT',
+        path: '/accounts/plan/unsubscribe',
+        config: {
+            auth: {
+                strategy: 'session',
+                scope: 'account'
+            },
+            validate: {
+                payload: {
+                    stripeCustomerId: Joi.string().required(),
+                    stripeSubscriptionId: Joi.string().required()
+                }
+            }
+        },
+        handler: function (request, reply) {
+            console.log('***server/api/accounts.js /accounts/plan/unsubscribe PUT');
+
+            var stripeSubscriptionId = request.payload.stripeSubscriptionId;
+            var stripeCustomerId = request.payload.stripeCustomerId;
+            
+            
+            function removeSubscriptionFromCustomer ( stripeCustomer) {
+                console.log('removeSubscriptionFromCustomer. Customer object:')
+                console.log(stripeCustomer)
+                
+                return stripe.subscriptions.del( stripeSubscriptionId ).then( function( subscription ){
+                    console.log('Subscrpition has been deleted. New subscription info:');
+                    console.log(subscription);
+                    
+                    const id = request.auth.credentials.roles.account._id.toString();
+                    // Set the status to account free (because it has been cancelled)
+                    const update = {
+                        $set: {
+                            status: {
+                                current: {
+                                    id: 'account-free'
+                                }
+                            },
+                            accountPlan : 'acccount-free',
+                            stripe: {
+                                subscription: subscription
+                            }
+                        }
+                    };
+                    const findOptions = {
+                        fields: Account.fieldsAdapter('user timeCreated details subjects accountPlan stripe')
+                    };
+                    console.log('--> update account with stripe info...')
+                    console.log(update);
+                    
+                    Account.findByIdAndUpdate(id, update, findOptions, (err, account) => {
+                        console.log('Account updated with new subscription (unsuscribed)')
+                        console.log(account)
+                    
+                        if (err) {
+                            console.log(err);
+                            return reply(Boom.notFound('Document not found.'));
+                        }
+                    
+                        reply(account);
+                    });
+                }, 
+                function( error ){
+                    console.log(error)
+                    if (error) {
+                    
+                        return reply(Boom.notFound('Error deleting subscription'));
+                    }
+                })
+            }
+            
+            // main code
+            stripe.customers.retrieve(
+                stripeCustomerId
+            ).then( removeSubscriptionFromCustomer );
+            
+        }
+    });
+    
     server.route({
         method: 'PUT',
         path: '/accounts/{id}/user',
