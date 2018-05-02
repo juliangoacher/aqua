@@ -242,14 +242,14 @@ internals.applyRoutes = function (server, next) {
             validate: {
                 payload: {
                     details: Joi.object().keys({
-                        dateOfBirth: Joi.string().allow(''),
-                        location: Joi.string().allow(''),
-                        ethnicity: Joi.string().allow(''),
-                        cycle: Joi.string().allow(''),
-                        exam: Joi.string().allow(''),
-                        userType: Joi.string().allow('')
+                        dateOfBirth: Joi.string().required(),
+                        location: Joi.string().required(),
+                        ethnicity: Joi.string().required(),
+                        cycle: Joi.string().required(),
+                        exam: Joi.string().required(),
+                        userType: Joi.string().required(),
                     }).required(),
-                    subjects: Joi.string().allow('')
+                    subjects: Joi.string().required(),
                 }
             }
         },
@@ -416,16 +416,16 @@ internals.applyRoutes = function (server, next) {
 
             var stripeSubscriptionId = request.payload.stripeSubscriptionId;
             var stripeCustomerId = request.payload.stripeCustomerId;
-            
-            
+
+
             function removeSubscriptionFromCustomer ( stripeCustomer) {
                 console.log('removeSubscriptionFromCustomer. Customer object:')
                 console.log(stripeCustomer)
-                
+
                 return stripe.subscriptions.del( stripeSubscriptionId ).then( function( subscription ){
                     console.log('Subscrpition has been deleted. New subscription info:');
                     console.log(subscription);
-                    
+
                     const id = request.auth.credentials.roles.account._id.toString();
                     // Set the status to account free (because it has been cancelled)
                     const update = {
@@ -446,36 +446,36 @@ internals.applyRoutes = function (server, next) {
                     };
                     console.log('--> update account with stripe info...')
                     console.log(update);
-                    
+
                     Account.findByIdAndUpdate(id, update, findOptions, (err, account) => {
                         console.log('Account updated with new subscription (unsuscribed)')
                         console.log(account)
-                    
+
                         if (err) {
                             console.log(err);
                             return reply(Boom.notFound('Document not found.'));
                         }
-                    
+
                         reply(account);
                     });
-                }, 
+                },
                 function( error ){
                     console.log(error)
                     if (error) {
-                    
+
                         return reply(Boom.notFound('Error deleting subscription'));
                     }
                 })
             }
-            
+
             // main code
             stripe.customers.retrieve(
                 stripeCustomerId
             ).then( removeSubscriptionFromCustomer );
-            
+
         }
     });
-    
+
     server.route({
         method: 'PUT',
         path: '/accounts/{id}/user',
