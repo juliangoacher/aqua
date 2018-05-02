@@ -33,7 +33,7 @@ internals.applyRoutes = function (server, next) {
                     name: Joi.string().required(),
                     email: Joi.string().email().lowercase().required(),
                     username: Joi.string().token().lowercase().required(),
-                    password: Joi.string().required()
+                    password: Joi.string().min(8).required()
                 }
             },
             pre: [{
@@ -141,10 +141,10 @@ internals.applyRoutes = function (server, next) {
                         }
                     };
                     const template = 'welcome';
-                    
-                    // jloriente: Send an html email instead of the 
+
+                    // jloriente: Send an html email instead of the
                     mailer.sendEmailHTML(emailOptions, template, request.payload, (err) => {
-                        
+
                         if (err) {
                             console.warn('sending welcome email failed:', err.stack);
                         }
