@@ -435,7 +435,7 @@ internals.applyRoutes = function (server, next) {
                                     id: 'account-free'
                                 }
                             },
-                            accountPlan : 'acccount-free',
+                            accountPlan : 'account-free',
                             stripe: {
                                 subscription: subscription
                             }
