@@ -72,10 +72,9 @@ internals.applyRoutes = function (server, next) {
                                     id: userId,  
                                 };
                                 Account.insertOne( account, function(){ 
-                                    console.log('Account %s inserted. UserId: ',i, userId); 
+                                    console.log('Account %s inserted. UserId: ', i, userId); 
                                } );
                             }else{
-                                // TODO
                                 console.log('user not found: ' + username);
                             }
                         })
