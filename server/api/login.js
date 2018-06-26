@@ -25,9 +25,7 @@ internals.applyRoutes = function (server, next) {
     //   isSecure: false //Should be set to true (which is the default) in production
     // });
 
-    function createMocksUser( user ){}
-
-    function importMocksUsers(request, reply, callback){
+    function importMocksUsers(request, reply){
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
     
@@ -79,7 +77,6 @@ internals.applyRoutes = function (server, next) {
                                 };
                                 Account.insertOne( account, function(){ 
                                     console.log('account inserted') 
-                                    done();
                                } );
                             }else{
                                 // TODO
@@ -87,7 +84,12 @@ internals.applyRoutes = function (server, next) {
                                 done( 'user not found: ' + username) 
                             }
                         })
-                    })
+                    }).on('close', () => {
+                        console.log('close');
+                        reply('DONE')
+                        done(); 
+                    });
+
             }]
         })
         
@@ -322,10 +324,7 @@ internals.applyRoutes = function (server, next) {
         path: '/import-mocks-users',            // The callback endpoint registered with the provider
         handler: function(request, reply) {
             console.log('server/api/login.json GET/POST /import-mocks-users');
-            importMocksUsers( request, reply, function( result ){
-                console.log('import-mock-users DONE');
-                //reply('importMocksUser result: ' + result);
-            });
+            importMocksUsers( request, reply )
         }
     })
 
