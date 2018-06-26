@@ -42,8 +42,6 @@ internals.applyRoutes = function (server, next) {
                         terminal:   false
                     }).on('line', line => {
                         let user = JSON.parse(line);
-                        console.log(user)
-                          
                         User.insertOne( user, function(){
                             console.log('User %s inserted: %s ', i, user.Email);
                         } ); 
@@ -54,6 +52,7 @@ internals.applyRoutes = function (server, next) {
             },
             account: [ 'user', function( results, done ){
                 console.log('inserting accounts...');
+                let i = 0;
                 require('readline')
                     .createInterface({
                         input:      fs.createReadStream('mocks-test-accounts-file.json'),
@@ -61,8 +60,6 @@ internals.applyRoutes = function (server, next) {
                         terminal:   false
                     }).on('line', line => {
                         let account = JSON.parse(line);
-                        console.log(account)
-                        
                         let username = account.username;
                         User.findByUsername( username, (err, user) => {
                             if (err) {
@@ -71,22 +68,19 @@ internals.applyRoutes = function (server, next) {
                             }
                             if (user){
                                 let userId = user['_id'];
-                                console.log('USER FOUND : ID: %s',  userId); 
                                 account.user = {
                                     id: userId,  
                                 };
                                 Account.insertOne( account, function(){ 
-                                    console.log('account inserted') 
+                                    console.log('Account %s inserted. UserId: ',i, userId); 
                                } );
                             }else{
                                 // TODO
                                 console.log('user not found: ' + username);
-                                done( 'user not found: ' + username) 
                             }
                         })
                     }).on('close', () => {
-                        console.log('close');
-                        reply('DONE')
+                        reply('User import completed.')
                         done(); 
                     });
 
