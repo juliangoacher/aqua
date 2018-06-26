@@ -25,6 +25,10 @@ internals.applyRoutes = function (server, next) {
     //   isSecure: false //Should be set to true (which is the default) in production
     // });
 
+    function createMocksUser( user ){
+        
+    }
+
     function importMocksUsers(request, reply, callback){
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
@@ -36,8 +40,12 @@ internals.applyRoutes = function (server, next) {
                 output:     process.stdout,
                 terminal:   false
             }).on('line', line => {
-        	    let obj = JSON.parse(line);
-                console.log(obj)
+        	    let user = JSON.parse(line);
+                console.log(user)
+                User.createUserBcryptPass( user.Username, user.Password, user.Email, function(){
+                    console.log('DONE');   
+                    callback( 'OK' )
+                })
             })
     }
 
@@ -269,11 +277,13 @@ internals.applyRoutes = function (server, next) {
         path: '/import-mocks-users',            // The callback endpoint registered with the provider
         handler: function(request, reply) {
             console.log('server/api/login.json GET/POST /import-mocks-users');
-            importMocksUsers( function(){
-                reply('importMocksUser completed');
+            importMocksUsers( request, reply, function( result ){
+                console.log('import-mock-users DONE');
+                //reply('importMocksUser result: ' + result);
             });
         }
     })
+
     server.route({
         method: ['GET', 'POST'],            // Must handle both GET and POST
         path: '/login-facebook',            // The callback endpoint registered with the provider
