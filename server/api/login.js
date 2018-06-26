@@ -28,7 +28,7 @@ internals.applyRoutes = function (server, next) {
     function importMocksUsers(request, reply){
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
-        let chain = new Promise(); 
+        let chain = Promise.resolve(); 
         console.time('import-users');
         Async.auto({
             user: function(done){
