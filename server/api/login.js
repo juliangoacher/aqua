@@ -25,8 +25,11 @@ internals.applyRoutes = function (server, next) {
     //   isSecure: false //Should be set to true (which is the default) in production
     // });
 
-    function CreateMocksUser(request, reply){
+    function importMocksUsers(request, reply, callback){
+        console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
+
+        // Read the users file and import them
         require('readline')
             .createInterface({
                 input:      fs.createReadStream('users-file.json'),
@@ -261,7 +264,16 @@ internals.applyRoutes = function (server, next) {
         }
     });
 
-
+    server.route({
+        method: ['GET', 'POST'],            // Must handle both GET and POST
+        path: '/import-mocks-users',            // The callback endpoint registered with the provider
+        handler: function(request, reply) {
+            console.log('server/api/login.json GET/POST /import-mocks-users');
+            importMocksUsers( function(){
+                reply('importMocksUser completed');
+            });
+        }
+    })
     server.route({
         method: ['GET', 'POST'],            // Must handle both GET and POST
         path: '/login-facebook',            // The callback endpoint registered with the provider
