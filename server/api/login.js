@@ -72,7 +72,7 @@ internals.applyRoutes = function (server, next) {
                                 User.findByUsername( username, (err, user) => {
                                     if (err) {
                                         console.log('error: ' + err);
-                                        done( err ); 
+                                        reject( err ); 
                                     }
                                     if (user){
                                         let userId = user['_id'];
@@ -90,7 +90,10 @@ internals.applyRoutes = function (server, next) {
                             });
                         });
                     }).on('close', () => {
-                        console.timeEnd('import-users')
+                        chain = chain.then( console.timeEnd('import-users') );
+                        chain.catch( err => {
+                            console.log( err );    
+                        })
                         reply('User import completed.')
                         done(); 
                     });
