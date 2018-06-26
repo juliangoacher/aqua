@@ -62,38 +62,6 @@ class User extends MongoModels {
         });
     }
 
-    // create user with a giver already bcrypted password
-    static createUserBcryptPass(username, bcryptedPass, email, callback){
-
-        const self = this;
-
-        Async.auto({
-            passwordHash: bcryptedPass,
-            newUser: ['passwordHash', function (results, done) {
-
-                const document = {
-                    isActive: true,
-                    username: username.toLowerCase(),
-                    password: bcryptedPass,
-                    email: email.toLowerCase(),
-                    timeCreated: new Date()
-                };
-
-                self.insertOne(document, done);
-            }]
-        }, (err, results) => {
-
-            if (err) {
-                return callback(err);
-            }
-
-            results.newUser[0].password = bcryptedPass;
-
-            callback(null, results.newUser[0]);
-        });
-
-    }
-
     static findByCredentials(username, password, callback) {
 
         const self = this;
