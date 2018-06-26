@@ -28,7 +28,7 @@ internals.applyRoutes = function (server, next) {
     function importMocksUsers(request, reply){
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
-    
+        let chain = new Promise(); 
         console.time('import-users');
         Async.auto({
             user: function(done){
@@ -41,10 +41,16 @@ internals.applyRoutes = function (server, next) {
                         output:     process.stdout,
                         terminal:   false
                     }).on('line', line => {
-                        let user = JSON.parse(line);
-                        User.insertOne( user, function(){
-                            console.log('User %s inserted: %s ', i++, user.email);
-                        } ); 
+                        chain = chain.then( () => {
+                            return new Promise( (resolve, reject) => {
+                                let user = JSON.parse(line);
+                                User.insertOne( user, function(){
+                                    console.log('User %s inserted: %s ', i++, user.email);
+                                    resolve();
+                                } ); 
+                            });  
+                        })  
+
                     }).on('close', () => {
                         done();    
                     });
@@ -59,25 +65,30 @@ internals.applyRoutes = function (server, next) {
                         output:     process.stdout,
                         terminal:   false
                     }).on('line', line => {
-                        let account = JSON.parse(line);
-                        let username = account.username;
-                        User.findByUsername( username, (err, user) => {
-                            if (err) {
-                                console.log('error: ' + err);
-                                done( err ); 
-                            }
-                            if (user){
-                                let userId = user['_id'];
-                                account.user = {
-                                    id: userId,  
-                                };
-                                Account.insertOne( account, function(){ 
-                                    console.log('Account %s inserted. UserId: ', i++, userId); 
-                               } );
-                            }else{
-                                console.log('user not found: ' + username);
-                            }
-                        })
+                        chain = chain.then( () => {
+                            return new Promise( (resolve, reject) => {
+                                let account = JSON.parse(line);
+                                let username = account.username;
+                                User.findByUsername( username, (err, user) => {
+                                    if (err) {
+                                        console.log('error: ' + err);
+                                        done( err ); 
+                                    }
+                                    if (user){
+                                        let userId = user['_id'];
+                                        account.user = {
+                                            id: userId,  
+                                        };
+                                        Account.insertOne( account, function(){ 
+                                            console.log('Account %s inserted. UserId: ', i++, userId); 
+                                            resolve();
+                                       } );
+                                    }else{
+                                        console.log('user not found: ' + username);
+                                    }
+                                });
+                            });
+                        });
                     }).on('close', () => {
                         console.timeEnd('import-users')
                         reply('User import completed.')
