@@ -4,7 +4,7 @@ const Bcrypt = require('bcrypt');
 const Boom = require('boom');
 const Config = require('../../config');
 const Joi = require('joi');
-
+const fs = require('fs');
 
 const internals = {};
 
@@ -25,31 +25,18 @@ internals.applyRoutes = function (server, next) {
     //   isSecure: false //Should be set to true (which is the default) in production
     // });
 
-
-    /* FACEBOOK DATA
-    "profile": {
-      "id": "1518514758204670",
-      "displayName": "Javier Loriente",
-      "name": {
-          "first": "Javier",
-          "last": "Loriente"
-      },
-      "email": "jloriente@gmail.com",
-      "raw": {
-          "id": "1518514758204670",
-          "name": "Javier Loriente",
-          "email": "jloriente@gmail.com",
-          "first_name": "Javier",
-          "last_name": "Loriente",
-          "gender": "male",
-          "link": "https://www.facebook.com/app_scoped_user_id/1518514758204670/",
-          "locale": "en_US",
-          "timezone": 2,
-          "updated_time": "2015-06-07T03:09:22+0000",
-          "verified": true
-      }
+    function CreateMocksUser(request, reply){
+        const mailer = request.server.plugins.mailer;
+        require('readline')
+            .createInterface({
+                input:      fs.createReadStream('users-file.json'),
+                output:     process.stdout,
+                terminal:   false
+            }).on('line', line => {
+        	    let obj = JSON.parse(line);
+                console.log(obj)
+            })
     }
-    */
 
     /**
     * Create a facebook user/account in aqua: When user auth with facebook a newUser
