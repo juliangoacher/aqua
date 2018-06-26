@@ -29,7 +29,7 @@ internals.applyRoutes = function (server, next) {
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
     
-
+        console.time('import-users');
         Async.auto({
             user: function(done){
                 // Read the users file and import them
@@ -43,7 +43,7 @@ internals.applyRoutes = function (server, next) {
                     }).on('line', line => {
                         let user = JSON.parse(line);
                         User.insertOne( user, function(){
-                            console.log('User %s inserted: %s ', i, user.Email);
+                            console.log('User %s inserted: %s ', i++, user.email);
                         } ); 
                     }).on('close', () => {
                         done();    
@@ -72,13 +72,14 @@ internals.applyRoutes = function (server, next) {
                                     id: userId,  
                                 };
                                 Account.insertOne( account, function(){ 
-                                    console.log('Account %s inserted. UserId: ', i, userId); 
+                                    console.log('Account %s inserted. UserId: ', i++, userId); 
                                } );
                             }else{
                                 console.log('user not found: ' + username);
                             }
                         })
                     }).on('close', () => {
+                        console.timeEnd('import-users')
                         reply('User import completed.')
                         done(); 
                     });
