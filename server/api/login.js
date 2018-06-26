@@ -30,57 +30,67 @@ internals.applyRoutes = function (server, next) {
     function importMocksUsers(request, reply, callback){
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
+    
 
-        // Read the users file and import them
-        console.log('inserting users...');
-        require('readline')
-            .createInterface({
-                input:      fs.createReadStream('mocks-test-user-file.json'),
-                output:     process.stdout,
-                terminal:   false
-            }).on('line', line => {
-        	    let user = JSON.parse(line);
-                console.log(user)
+        Async.auto({
+            user: function(done){
+                // Read the users file and import them
+                console.log('inserting users...');
+                let i = 0;
+                require('readline')
+                    .createInterface({
+                        input:      fs.createReadStream('mocks-test-user-file.json'),
+                        output:     process.stdout,
+                        terminal:   false
+                    }).on('line', line => {
+                        let user = JSON.parse(line);
+                        console.log(user)
+                          
+                        User.insertOne( user, function(){
+                            console.log('User %s inserted: %s ', i, user.Email);
+                        } ); 
+                    }).on('close', () => {
+                        done();    
+                    });
 
-                // Insert users
-                let document = {
-                    isActive: true,
-                    username: user.Username.toLowerCase(),
-                    password: user.BCryptPassword,
-                    email: user.Email.toLowerCase(),
-                    timeCreated: user.CreatedOnDate
-                } 
-                User.insertOne( document, function(){ console.log('user inserted')} ); 
-            })
+            },
+            account: [ 'user', function( results, done ){
+                console.log('inserting accounts...');
+                require('readline')
+                    .createInterface({
+                        input:      fs.createReadStream('mocks-test-accounts-file.json'),
+                        output:     process.stdout,
+                        terminal:   false
+                    }).on('line', line => {
+                        let account = JSON.parse(line);
+                        console.log(account)
+                        
+                        let username = account.username;
+                        User.findByUsername( username, (err, user) => {
+                            if (err) {
+                                console.log('error: ' + err);
+                                done( err ); 
+                            }
+                            if (user){
+                                let userId = user['_id'];
+                                console.log('USER FOUND : ID: %s',  userId); 
+                                account.user = {
+                                    id: userId,  
+                                };
+                                Account.insertOne( account, function(){ 
+                                    console.log('account inserted') 
+                                    done();
+                               } );
+                            }else{
+                                // TODO
+                                console.log('user not found: ' + username);
+                                done( 'user not found: ' + username) 
+                            }
+                        })
+                    })
+            }]
+        })
         
-        console.log('inserting accounts...');
-        require('readline')
-            .createInterface({
-                input:      fs.createReadStream('mocks-test-accounts-file.json'),
-                output:     process.stdout,
-                terminal:   false
-            }).on('line', line => {
-        	    let account = JSON.parse(line);
-                console.log(account)
-                
-                let username = account.username;
-                User.findByUsername( username, (err, user) => {
-                    if (err) {
-                        console.log('error: ' + err);    
-                    }
-                    if (user){
-                        let userId = user['_id'];
-                        console.log('USER FOUND : ID: %s',  userId); 
-                        account.user = {
-                            id: userId,  
-                        };
-                        Account.insertOne( account, function(){ console.log('account inserted') } );
-                    }else{
-                        // TODO
-                        console.log('user not found: ' + username);    
-                    }
-                })
-            })
 
     }
 
