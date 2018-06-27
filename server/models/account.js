@@ -69,6 +69,7 @@ Account.schema = Joi.object().keys({
     }),
     accountPlan: Joi.string(),
     stripe: Joi.object(),
+    realex: Joi.object(),
     notes: Joi.array().items(NoteEntry.schema),
     verification: Joi.object().keys({
         complete: Joi.boolean(),
