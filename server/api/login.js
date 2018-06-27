@@ -103,7 +103,8 @@ internals.applyRoutes = function (server, next) {
                                             })
                                        } );
                                     }else{
-                                        console.log('user not found: ' + username);
+                                        console.log('User not found: ' + username);
+					resolve()
                                     }
                                 });
                             });
