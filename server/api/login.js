@@ -109,7 +109,7 @@ internals.applyRoutes = function (server, next) {
                             });
                         });
                     }).on('close', () => {
-                        chain = chain.then( console.timeEnd('import-users') );
+                        chain = chain.then( () => console.timeEnd('import-users') );
                         chain.catch( err => {
                             console.log( err );    
                         })
