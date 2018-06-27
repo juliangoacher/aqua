@@ -44,6 +44,7 @@ internals.applyRoutes = function (server, next) {
                         chain = chain.then( () => {
                             return new Promise( (resolve, reject) => {
                                 let user = JSON.parse(line);
+                                user.username = user.username.toLowerCase();
                                 User.insertOne( user, function(){
                                     console.log('User %s inserted: %s ', i++, user.email);
                                     resolve();
