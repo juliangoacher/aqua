@@ -82,6 +82,8 @@ internals.applyRoutes = function (server, next) {
                                         Account.insertOne( account, function( err, r ){ 
                                             console.log('Account %s inserted. UserId: ', i++, userId); 
                                             console.log( r );
+                                            let accountId = r['Account']['_id'];
+                                            console.log('accountId ' + accountId)
                                             resolve();
                                        } );
                                     }else{
