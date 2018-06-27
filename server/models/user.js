@@ -79,13 +79,9 @@ class User extends MongoModels {
                 else {
                     query.username = username.toLowerCase();
                 }
-                console.log('query: ' + query);
                 self.findOne(query, done);
             },
             passwordMatch: ['user', function (results, done) {
-                console.log('passwordMatch');
-                console.log(results)
-
                 if (!results.user) {
                     return done(null, false);
                 }
