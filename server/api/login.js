@@ -25,10 +25,58 @@ internals.applyRoutes = function (server, next) {
     //   isSecure: false //Should be set to true (which is the default) in production
     // });
 
+    function updateMocksAccountsToPremium(request, repy){
+        console.log('updateMocksAccountsToPremium');
+        let i = 0;
+        require('readline')
+            .createInterface({
+                input:      fs.createReadStream('mocks-subs-upgrade.json'),
+                output:     process.stdout,
+                terminal:   false
+            }).on('line', line => {
+                chain = chain.then( () => {
+                    return new Promise( (resolve, reject) => {
+                        let account = JSON.parse(line);
+                        let username = account.username;
+                        Account.findByUsername( username, (err, account) => {
+                            if ( err ) {
+                                console.log('error: ' + err);
+                                reject( err );
+                            }
+                            if ( account ){
+                                let accountId = account['_id'];)
+                                let update = {
+                                    $set: {
+                                        status: {
+                                            current : {
+                                                id : 'account-free',
+                                                name: 'free'
+                                        }
+                                    }}
+                                }
+                                Account.findByIdAndUpdate( accountId, update, function( err, r ){
+                                    if ( err ) {
+                                        reject( err );
+                                    }else{
+                                        console.log('%s Account updated to premium. Username %s AccountId: %s ', i++, username, accountId);
+                                        resolve();
+                                    }
+                                })
+                            }
+                        });
+                    });
+                })
+
+            }).on('close', () => {
+                done();
+            });
+
+    }
+
     function importMocksUsers(request, reply){
         console.log('importMocksUsers...')
         const mailer = request.server.plugins.mailer;
-        let chain = Promise.resolve(); 
+        let chain = Promise.resolve();
         console.time('import-users');
         Async.auto({
             user: function(done){
@@ -48,12 +96,12 @@ internals.applyRoutes = function (server, next) {
                                 User.insertOne( user, function(){
                                     console.log('User %s inserted: %s ', i++, user.email);
                                     resolve();
-                                } ); 
-                            });  
-                        })  
+                                } );
+                            });
+                        })
 
                     }).on('close', () => {
-                        done();    
+                        done();
                     });
 
             },
@@ -73,17 +121,17 @@ internals.applyRoutes = function (server, next) {
                                 User.findByUsername( username, (err, user) => {
                                     if ( err ) {
                                         console.log('error: ' + err);
-                                        reject( err ); 
+                                        reject( err );
                                     }
                                     if ( user ){
                                         let userId = user['_id'];
                                         account.user = {
-                                            id: userId, 
-                                            name: username 
+                                            id: userId,
+                                            name: username
                                         };
-                                        Account.insertOne( account, function( err, r ){ 
+                                        Account.insertOne( account, function( err, r ){
                                             if ( err ) reject( err );
-                                            console.log('Account %s inserted. UserId: ', i++, userId); 
+                                            console.log('Account %s inserted. UserId: ', i++, userId);
                                             // Link Account
                                             let accountId = r[0]['_id'];
                                             let update = {
@@ -92,19 +140,22 @@ internals.applyRoutes = function (server, next) {
                                                         account: {
                                                             id: accountId,
                                                             name: r[0]['username']
-                                                        }    
-                                                    }    
-                                                } 
+                                                        }
+                                                    }
+                                                }
                                             }
                                             User.findByIdAndUpdate( userId, update, function( err, r ){
-                                                if ( err ) reject( err );
-                                                console.log('Account linked ok. UserId %s with AccountId: %s ', userId, accountId);
-                                                resolve();    
+                                                if ( err ) {
+                                                    reject( err );
+                                                }else{
+                                                    console.log('Account linked ok. UserId %s with AccountId: %s ', userId, accountId);
+                                                    resolve();
+                                                }
                                             })
                                        } );
                                     }else{
                                         console.log('User not found: ' + username);
-					resolve()
+                                        resolve()
                                     }
                                 });
                             });
@@ -112,15 +163,15 @@ internals.applyRoutes = function (server, next) {
                     }).on('close', () => {
                         chain = chain.then( () => console.timeEnd('import-users') );
                         chain.catch( err => {
-                            console.log( err );    
+                            console.log( err );
                         })
                         reply('User import completed.')
-                        done(); 
+                        done();
                     });
 
             }]
         })
-        
+
 
     }
 
@@ -353,6 +404,15 @@ internals.applyRoutes = function (server, next) {
         handler: function(request, reply) {
             console.log('server/api/login.json GET/POST /import-mocks-users');
             importMocksUsers( request, reply )
+        }
+    })
+
+    server.route({
+        method: ['GET', 'POST'],            // Must handle both GET and POST
+        path: '/update-mocks-accounts',            // The callback endpoint registered with the provider
+        handler: function(request, reply) {
+            console.log('server/api/login.json GET/POST /update-mocks-account');
+            updateMocksAccountsToPremium( request, reply )
         }
     })
 
