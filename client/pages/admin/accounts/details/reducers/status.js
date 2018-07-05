@@ -61,7 +61,10 @@ const reducer = function (state = initialState, action) {
 
         if (action.response.hasOwnProperty('status')) {
             stateUpdates.current = action.response.status.current;
-            stateUpdates.log = action.response.status.log.reverse();
+            // TODO: if status.log is undefined this causes an error
+            // status.log value should be an array of all the status
+            // @jloriente: temporary add this to aviod the error but this needs further investigation
+            if ( action.response.status.log ) stateUpdates.log = action.response.status.log.reverse();
             stateUpdates.newStatus = action.response.status.current.id;
         }
 
