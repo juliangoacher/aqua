@@ -65,7 +65,7 @@ const reducer = function (state = initialState, action) {
             // status.log value should be an array of all the status
             // @jloriente: temporary add this to aviod the error but this needs further investigation
             if ( action.response.status.log ) stateUpdates.log = action.response.status.log.reverse();
-            stateUpdates.newStatus = action.response.status.current.id;
+            stateUpdates.newStatus = action.re sponse.status.current.id;
         }
 
         return ObjectAssign({}, state, stateUpdates);
