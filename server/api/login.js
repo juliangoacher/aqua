@@ -28,9 +28,10 @@ internals.applyRoutes = function (server, next) {
     function updateMocksAccountsToPremium(request, repy){
         console.log('updateMocksAccountsToPremium');
         let i = 0;
+	let chain = Promise.resolve();
         require('readline')
             .createInterface({
-                input:      fs.createReadStream('mocks-subs-upgrade.json'),
+                input:      fs.createReadStream('mocks-subs-upgrades.json'),
                 output:     process.stdout,
                 terminal:   false
             }).on('line', line => {
@@ -38,21 +39,24 @@ internals.applyRoutes = function (server, next) {
                     return new Promise( (resolve, reject) => {
                         let account = JSON.parse(line);
                         let username = account.username;
+			let realex = account.realex;
                         Account.findByUsername( username, (err, account) => {
                             if ( err ) {
                                 console.log('error: ' + err);
                                 reject( err );
                             }
                             if ( account ){
-                                let accountId = account['_id'];)
+                                let accountId = account['_id']
                                 let update = {
                                     $set: {
                                         status: {
                                             current : {
-                                                id : 'account-free',
-                                                name: 'free'
-                                        }
-                                    }}
+                                                id : 'account-premium',
+                                                name: 'premium'
+					    }
+                                        },
+					realex: realex
+                                    }
                                 }
                                 Account.findByIdAndUpdate( accountId, update, function( err, r ){
                                     if ( err ) {
@@ -68,7 +72,8 @@ internals.applyRoutes = function (server, next) {
                 })
 
             }).on('close', () => {
-                done();
+                console.log('close');
+		//resolve();
             });
 
     }
