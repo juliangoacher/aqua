@@ -17,7 +17,7 @@ class HomePage extends React.Component {
                     <title>Aqua</title>
                 </Helmet>
                 <div className="jumbotron">
-                    <h1>Success</h1>
+                    <h1>Success iRevise</h1>
                     <p className="lead">Your website and user system is ready.</p>
                 </div>
                 <div className="row">

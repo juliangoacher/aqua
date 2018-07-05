@@ -28,9 +28,10 @@ internals.applyRoutes = function (server, next) {
     function updateMocksAccountsToPremium(request, repy){
         console.log('updateMocksAccountsToPremium');
         let i = 0;
+	let chain = Promise.resolve();
         require('readline')
             .createInterface({
-                input:      fs.createReadStream('mocks-subs-upgrade.json'),
+                input:      fs.createReadStream('mocks-subs-upgrades.json'),
                 output:     process.stdout,
                 terminal:   false
             }).on('line', line => {
