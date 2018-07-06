@@ -24,7 +24,9 @@ const config = {
     baseUrl: {
         $filter: 'env',
         $meta: 'values should not end in "/"',
-        production: 'https://irevise.com/aqua',
+        production: 'https://irevise.com/',
+        $productionTest: 'https://irevise.com/aqua',
+        $productionOriginal: 'https://getaqua.herokuapp.com',
         $default: 'http://127.0.0.1:8000'
     },
     authAttempts: {
