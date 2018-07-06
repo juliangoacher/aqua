@@ -422,9 +422,10 @@ internals.applyRoutes = function (server, next) {
         }
     })
 
+    // redirect url for oauth. Should include the country e.g. /login-facebook/ie       /login-facebook/uk
     server.route({
         method: ['GET', 'POST'],            // Must handle both GET and POST
-        path: '/login-facebook',            // The callback endpoint registered with the provider
+        path: '/login-facebook/{country}',            // The callback endpoint registered with the provider
         config: {
             auth: {
                 mode: 'try',
@@ -432,7 +433,11 @@ internals.applyRoutes = function (server, next) {
             }
         },
         handler: function(request, reply) {
-            console.log('server/api/login.js  GET/POST /login-facebook');
+            console.log('server/api/login.js  GET/POST /login-facebook: ');
+            console.log('country: ' + request.params.country );
+
+            var redirectCountry = 'ie';
+            if ( request.params && request.params.country ) redirectCountry = request.params.country;
 
             if (!request.auth.isAuthenticated) {
                 return reply({ err : 'Authentication failed due to: ' + request.auth.error.message });
@@ -488,8 +493,9 @@ internals.applyRoutes = function (server, next) {
                         authHeader
                     };
 
+
                     request.cookieAuth.set(result);
-                    reply.redirect('/');
+                    reply.redirect( '/' + redirectCountry );
                 }]
 
             });
