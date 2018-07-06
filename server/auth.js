@@ -78,7 +78,7 @@ internals.applyStrategy = function (server, next) {
             provider: 'facebook',
             password: 'cookie_encryption_password_secure',
             //isSecure: false,      // used for testing
-            isSecure: true,
+            isSecure: false,
             //redirectTo: '/login',
             // You'll need to go to  h and set up a
             // Website application to get started
