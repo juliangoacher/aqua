@@ -88,7 +88,7 @@ internals.applyStrategy = function (server, next) {
             // TODO: Use location-testing: server.info.uri when testing locally
             clientId: '239619470103766',
             clientSecret: 'eb54cc82a80938eb0a660d8908ab5bf7',
-            location: 'https://irevise.com/aqua'
+            location: 'https://irevise.com/aqua/'
     });
 
 
