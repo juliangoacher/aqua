@@ -489,7 +489,7 @@ internals.applyRoutes = function (server, next) {
                     };
 
                     request.cookieAuth.set(result);
-                    reply.redirect('/account');
+                    reply.redirect('/');
                 }]
 
             });
