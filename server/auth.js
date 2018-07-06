@@ -77,7 +77,8 @@ internals.applyStrategy = function (server, next) {
     server.auth.strategy('facebook', 'bell' , {
             provider: 'facebook',
             password: 'cookie_encryption_password_secure',
-            isSecure: false,
+            //isSecure: false,      // used for testing
+            isSecure: true,
             //redirectTo: '/login',
             // You'll need to go to  h and set up a
             // Website application to get started
@@ -85,9 +86,9 @@ internals.applyStrategy = function (server, next) {
             // Under Settings >> Advanced, set the Valid OAuth redirect URIs to include http://<yourdomain.com>/bell/door
             // and enable Client OAuth Login
             // TODO: Use location-testing: server.info.uri when testing locally
-            clientId: '115199272474609',
-            clientSecret: '1ad8608299b69d88215da228fa4286f4',
-            location: 'http://aqua.locomote.sh'
+            clientId: '239619470103766',
+            clientSecret: 'eb54cc82a80938eb0a660d8908ab5bf7',
+            location: 'http://irevise.com/aqua/'
     });
 
 
