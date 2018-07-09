@@ -211,7 +211,13 @@ function createJob( aqua, opts ) {
 
     /// Send a notification email.
     function sendNotificationEmail( user, result ) {
-        let userEmail = user.email || user.realex.Email;
+        let userEmail;
+        if( opts.testMode ) {
+            userEmail = opts.testEmail || 'javier.loriente@innerfunction.com';
+        }
+        else {
+            userEmail = user.email || user.realex.Email;
+        }
         // See https://nodemailer.com/about/
         let opts = {
             from:       'info@mocks.ie',
