@@ -541,7 +541,7 @@ internals.applyRoutes = function (server, next) {
         }
     });
 
-    var countryBaseUrl = '/ie',;
+    var countryBaseUrl = '/ie';
     server.route({
         method: 'POST',
         path: '/login/forgot',
