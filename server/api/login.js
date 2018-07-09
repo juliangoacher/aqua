@@ -604,7 +604,8 @@ internals.applyRoutes = function (server, next) {
                     };
                     const template = 'forgot-password';
                     const context = {
-                        baseHref: Config.get('/baseUrl') + '/login/reset',
+                        baseHref: Config.get('/baseUrl') + '/reset-password.html',
+                        //baseHref: Config.get('/baseUrl') + '/login/reset',
                         email: results.user.email,
                         key: results.keyHash.key
                     };
