@@ -28,7 +28,7 @@ internals.applyRoutes = function (server, next) {
     function updateMocksAccountsToPremium(request, repy){
         console.log('updateMocksAccountsToPremium');
         let i = 0;
-	let chain = Promise.resolve();
+	    let chain = Promise.resolve();
         require('readline')
             .createInterface({
                 input:      fs.createReadStream('mocks-subs-upgrades.json'),
@@ -541,13 +541,15 @@ internals.applyRoutes = function (server, next) {
         }
     });
 
+    var countryBaseUrl = '/ie',;
     server.route({
         method: 'POST',
         path: '/login/forgot',
         config: {
             validate: {
                 payload: {
-                    email: Joi.string().email().lowercase().required()
+                    email: Joi.string().email().lowercase().required(),
+                    country: Joi.string()
                 }
             },
             pre: [{
@@ -557,6 +559,8 @@ internals.applyRoutes = function (server, next) {
                     const conditions = {
                         email: request.payload.email
                     };
+                    countryBaseUrl = request.payload.country;
+                    console.log('CountryBaseUrl: ' + request.payload.country);
 
                     User.findOne(conditions, (err, user) => {
 
@@ -604,7 +608,7 @@ internals.applyRoutes = function (server, next) {
                     };
                     const template = 'forgot-password';
                     const context = {
-                        baseHref: Config.get('/baseUrl') + '/reset-password.html',
+                        baseHref: Config.get('/baseUrl') + countryBaseUrl + '/reset-password.html',         // countryBaseUrl is /ie /uk...
                         //baseHref: Config.get('/baseUrl') + '/login/reset',
                         email: results.user.email,
                         key: results.keyHash.key
