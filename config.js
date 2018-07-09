@@ -24,8 +24,9 @@ const config = {
     baseUrl: {
         $filter: 'env',
         $meta: 'values should not end in "/"',
-        production: 'https://irevise.com/aqua',
-        productionAqua: 'http://aqua.locomote.sh',
+        production: 'https://irevise.com',
+        productionAqua: 'https://irevise.com/aqua',
+        productionAqua1: 'http://aqua.locomote.sh',
         productionOriginal: 'https://getaqua.herokuapp.com',
         $default: 'http://127.0.0.1:8000'
     },
