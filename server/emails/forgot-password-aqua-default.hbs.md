@@ -4,8 +4,8 @@ We received a request to reset the password for your account. You'll
 need this key to do it.
 
 __Key:__  
-{{baseHref}}/?@d&email={{email}}&key={{key}}
+{{baseHref}}/{{email}}/{{key}}
 
 Love,
 
-iRevise
+The Plot Device
